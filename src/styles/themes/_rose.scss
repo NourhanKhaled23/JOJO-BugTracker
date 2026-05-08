@@ -1,0 +1,23 @@
+// Rose Quartz Theme
+.theme-rose {
+  --bg-base: #0F0A0F;
+  --bg-surface: #1A1018;
+  --bg-elevated: #2A1A25;
+  --bg-hover: #3A2535;
+  --border: #2E1A2A;
+  --border-strong: #4A2A43;
+
+  --text-primary: #FFF0F5;
+  --text-secondary: #D4A0C4;
+  --text-muted: #9E7092;
+
+  // Accent: Pink
+  --accent: #EC4899;
+  --accent-bright: #F472B6;
+  --accent-subtle: rgba(236, 72, 153, 0.15);
+
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+}

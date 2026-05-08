@@ -1,0 +1,32 @@
+@use './styles/themes/_variables.scss';
+@use './styles/themes/_dark.scss';
+@use './styles/themes/_light.scss';
+@use './styles/themes/_rose.scss';
+@use './styles/themes/_ocean.scss';
+@use './styles/themes/_forest.scss';
+@use './styles/themes/_animations.scss';
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bg-base text-text-primary font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-bg-surface border border-border rounded-xl transition-all duration-150 ease-out;
+    &:hover {
+      @apply -translate-y-[2px] shadow-[0_8px_24px_rgba(0,0,0,0.3)] border-accent-subtle;
+    }
+  }
+}

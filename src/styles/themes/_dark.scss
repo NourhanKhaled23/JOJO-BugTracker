@@ -1,0 +1,23 @@
+// Base (Dark Theme — Default)
+:root {
+  --bg-base: #0A0A0F;
+  --bg-surface: #13131A;
+  --bg-elevated: #1C1C27;
+  --bg-hover: #252535;
+  --border: #2A2A3E;
+  --border-strong: #3D3D5C;
+
+  --text-primary: #F0F0FF;
+  --text-secondary: #9090B0;
+  --text-muted: #60607A;
+
+  // Accent: Electric Violet
+  --accent: #7C3AED;
+  --accent-bright: #9D5FF0;
+  --accent-subtle: rgba(124, 58, 237, 0.15);
+
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+}
