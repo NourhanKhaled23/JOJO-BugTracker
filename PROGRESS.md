@@ -10,7 +10,7 @@
 
 | Sprint | Name | Status | Progress |
 |---|---|---|---|
-| Sprint 0 | Setup & Foundation | 🟡 In Progress | 0/10 |
+| Sprint 0 | Setup & Foundation | 🟢 Done | 10/10 |
 | Sprint 1 | Auth & Shell | ⬜ Not Started | 0/7 |
 | Sprint 2 | Projects | ⬜ Not Started | 0/5 |
 | Sprint 3 | Bugs Core | ⬜ Not Started | 0/6 |
@@ -27,58 +27,58 @@
 
 ### Checklist
 
-- [ ] **S0-01** Angular project initialization
+- [x] **S0-01** Angular project initialization
   - Command: `ng new bugtrackr --routing --style=scss --standalone`
   - Verify: Project compiles, `ng serve` works
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-02** Install all dependencies
+- [x] **S0-02** Install all dependencies
   - Core: `@ngrx/signals @angular/cdk chart.js ng2-charts lucide-angular jwt-decode`
   - Styling: `tailwindcss postcss autoprefixer`
   - Rich text: `quill ngx-quill`
   - Animation: `gsap`
   - Dev: `prettier eslint-plugin-prettier`
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-03** Tailwind CSS configuration
+- [x] **S0-03** Tailwind CSS configuration
   - Init Tailwind with `npx tailwindcss init`
   - Configure `tailwind.config.js` with design tokens (colors, fonts, breakpoints)
   - Update `styles.scss` to include Tailwind directives
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-04** Folder structure setup
+- [x] **S0-04** Folder structure setup
   - Create: `core/`, `shared/`, `features/`, `layout/`, `styles/themes/`
   - Create sub-folders per architecture doc
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-05** Theme system + CSS variables (all 5 themes)
+- [x] **S0-05** Theme system + CSS variables (all 5 themes)
   - Create: `_variables.scss`, `_animations.scss`
   - Create: `_dark.scss`, `_light.scss`, `_rose.scss`, `_ocean.scss`, `_forest.scss`
   - Wire up theme class toggling
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-06** Core module: API service base
+- [x] **S0-06** Core module: API service base
   - `api.service.ts` — Base HTTP abstraction with caching
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-07** Core module: JWT interceptor + Auth guard
+- [x] **S0-07** Core module: JWT interceptor + Auth guard
   - `jwt.interceptor.ts` — Auto-attach token, handle refresh
   - `auth.guard.ts` — Protect routes, redirect with returnUrl
   - `error.interceptor.ts` — Global error handling
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-08** Core models: TypeScript interfaces
+- [x] **S0-08** Core models: TypeScript interfaces
   - `user.model.ts`, `project.model.ts`, `bug.model.ts`
   - `comment.model.ts`, `label.model.ts`, `attachment.model.ts`, `activity.model.ts`
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-09** Shared components: Badge, Avatar, Modal skeleton
+- [x] **S0-09** Shared components: Badge, Avatar, Modal skeleton
   - Basic reusable dumb components
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S0-10** Route structure with lazy loading
+- [x] **S0-10** Route structure with lazy loading
   - `app.routes.ts` with lazy-loaded feature routes
-  - Status: ⬜
+  - Status: ✅
 
 ### How to Verify Sprint 0 is Complete
 1. `ng serve` runs without errors
@@ -240,7 +240,9 @@
 
 | Time | Task ID | Action | Result | Files Created/Modified |
 |---|---|---|---|---|
-| | | | | |
+| 02:40 | S0-01 | Init Angular | Success | Angular base files |
+| 02:45 | S0-02 | Install dependencies | Success | package.json |
+| 02:48 | S0-03..S0-10 | Setup structure | Success | SCSS, TS, environments |
 
 *(Entries will be added as work progresses)*
 
