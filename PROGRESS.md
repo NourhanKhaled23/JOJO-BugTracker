@@ -11,7 +11,7 @@
 | Sprint | Name | Status | Progress |
 |---|---|---|---|
 | Sprint 0 | Setup & Foundation | 🟢 Done | 10/10 |
-| Sprint 1 | Auth & Shell | ⬜ Not Started | 0/7 |
+| Sprint 1 | Auth & Shell | 🟢 Done | 7/7 |
 | Sprint 2 | Projects | ⬜ Not Started | 0/5 |
 | Sprint 3 | Bugs Core | ⬜ Not Started | 0/6 |
 | Sprint 4 | Kanban + Comments | ⬜ Not Started | 0/4 |
@@ -94,44 +94,44 @@
 
 ### Checklist
 
-- [ ] **S1-01** Login page with animations
+- [x] **S1-01** Login page with animations
   - Shake effect on wrong credentials
   - Show/hide password toggle
   - Loading state on submit
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S1-02** Register page (2-step animated form)
+- [x] **S1-02** Register page (2-step animated form)
   - Step 1: Name + Email
   - Step 2: Password + Confirm + Avatar
   - Progress bar between steps
   - Password strength meter
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S1-03** App shell layout (sidebar + topbar)
+- [x] **S1-03** App shell layout (sidebar + topbar)
   - Sidebar: navigation links, project list, collapse toggle
   - Topbar: breadcrumb, search trigger, notifications, user menu
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S1-04** Responsive sidebar
+- [x] **S1-04** Responsive sidebar
   - Desktop: full sidebar with labels
   - Tablet: icon-only sidebar
   - Mobile: bottom tab bar
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S1-05** Protected route navigation
+- [x] **S1-05** Protected route navigation
   - Auth guard active on all /dashboard, /projects, /bugs routes
   - Redirect to /auth/login with returnUrl
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S1-06** Auth Signal Store
+- [x] **S1-06** Auth Signal Store
   - State: user, token, isAuthenticated, isLoading, error
   - Actions: login, register, logout, refreshToken
-  - Status: ⬜
+  - Status: ✅
 
-- [ ] **S1-07** Toast notification service
+- [x] **S1-07** Toast notification service
   - Success, error, warning, info variants
   - Bottom-right stack, auto-dismiss with progress bar
-  - Status: ⬜
+  - Status: ✅
 
 ### Verification
 1. Can register a new user (mock API)
@@ -243,6 +243,7 @@
 | 02:40 | S0-01 | Init Angular | Success | Angular base files |
 | 02:45 | S0-02 | Install dependencies | Success | package.json |
 | 02:48 | S0-03..S0-10 | Setup structure | Success | SCSS, TS, environments |
+| 03:52 | S1-01..S1-07 | Auth & Shell | Success | Login, Register, Sidebar, Topbar, Auth Store |
 
 *(Entries will be added as work progresses)*
 
