@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { Shell } from './layout/shell/shell';
+import { roleGuard } from './core/auth/role.guard';
+import { Role } from './core/enums/role';
+
 
 export const routes: Routes = [
   {
@@ -26,6 +29,11 @@ export const routes: Routes = [
       { 
         path: 'dashboard', 
         loadComponent: () => import('./shared/components/badge/badge').then(m => m.Badge) // Just a placeholder to prevent error
+      },
+      {
+        path: 'admin',
+        canActivate: [roleGuard([Role.Admin])],
+        loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent)
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
