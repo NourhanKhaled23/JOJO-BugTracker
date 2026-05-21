@@ -1,0 +1,112 @@
+/* Nav item base */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  color: var(--text-secondary);
+  transition: all 150ms;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+
+    .nav-icon {
+      transform: scale(1.1);
+      color: var(--accent);
+    }
+  }
+}
+
+.nav-admin {
+  &:hover {
+    color: var(--error);
+    background: rgb(from var(--error) r g b / 0.1);
+  }
+}
+
+.nav-icon {
+  flex-shrink: 0;
+  transition: all 200ms;
+}
+
+.nav-label {
+  font-weight: 700;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  transition: opacity 300ms, transform 300ms;
+
+  &.collapsed {
+    opacity: 0;
+    transform: translateX(8px);
+    width: 0;
+    overflow: hidden;
+  }
+}
+
+/* Tooltip on collapse */
+.tooltip {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms;
+  z-index: 100;
+}
+
+.group:hover .tooltip {
+  opacity: 1;
+}
+
+/* Thin custom scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+}
+
+/* Active nav override (from global) */
+:host ::ng-deep .active-nav {
+  background: linear-gradient(135deg, var(--accent), var(--accent-bright)) !important;
+  color: white !important;
+  box-shadow: 0 8px 24px -8px var(--accent) !important;
+
+  .nav-icon {
+    color: white !important;
+    transform: scale(1.1);
+  }
+
+  .nav-label {
+    color: white !important;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, var(--accent), var(--accent-bright)) !important;
+  }
+}

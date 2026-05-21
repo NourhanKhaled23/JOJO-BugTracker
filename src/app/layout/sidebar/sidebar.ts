@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { LucideAngularModule, LayoutDashboard, FolderKanban, Bug, Users, Settings, ChevronRight, Tag, ShieldAlert } from 'lucide-angular';
+import { LucideAngularModule, LayoutDashboard, FolderKanban, Bug, Users, Settings, ChevronRight, Tag, ShieldAlert, LogOut } from 'lucide-angular';
 import { listAnimation } from '../../core/animations/ui.animations';
 import { AuthStore } from '../../core/stores/auth.store';
 import { ProjectsStore } from '../../features/projects/store/projects.store';
@@ -31,8 +31,9 @@ export class Sidebar {
   readonly ChevronRight = ChevronRight;
   readonly Tag = Tag;
   readonly ShieldAlert = ShieldAlert;
+  readonly LogOut = LogOut;
 
-  navItems = [
+  readonly navItems = [
     { label: 'Dashboard', icon: LayoutDashboard, route: '/dashboard', exact: true },
     { label: 'Projects',  icon: FolderKanban,    route: '/projects',  exact: false },
     { label: 'Issues',    icon: Bug,             route: '/bugs',      exact: false },
@@ -41,13 +42,27 @@ export class Sidebar {
     { label: 'Settings',  icon: Settings,        route: '/settings',  exact: false },
   ];
 
-  // Show up to 3 active projects in the pinned section
-  pinnedProjects = computed(() =>
+  readonly pinnedProjects = computed(() =>
     this.projectsStore.activeProjects().slice(0, 3)
   );
 
   get isAdmin(): boolean {
-    const role = this.authStore.user()?.role;
-    return role === Role.Admin || role === Role.Owner;
+    return this.authStore.user()?.role === Role.Admin || this.authStore.user()?.role === Role.Owner;
+  }
+
+  get userLabel(): string {
+    return this.authStore.user()?.fullName || 'User';
+  }
+
+  get userRole(): string {
+    return this.authStore.user()?.role || 'viewer';
+  }
+
+  get userInitial(): string {
+    return this.authStore.user()?.fullName?.charAt(0) || 'U';
+  }
+
+  logout(): void {
+    this.authStore.logout();
   }
 }
