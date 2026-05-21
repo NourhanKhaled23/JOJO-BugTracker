@@ -54,8 +54,12 @@
     }
   </div>
 
-  <app-performance-overlay></app-performance-overlay>
-  <app-command-palette></app-command-palette>
+  @defer (on idle) {
+    <app-performance-overlay />
+  }
+  @defer (on idle) {
+    <app-command-palette />
+  }
 </div>
 
 

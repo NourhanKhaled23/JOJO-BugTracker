@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal, NgZone, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnDestroy, signal, NgZone, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Activity, Cpu, Zap, Database, Globe } from 'lucide-angular';
 import { BugsStore } from '../../../features/bugs/store/bugs.store';
@@ -70,7 +70,7 @@ import { ProjectsStore } from '../../../features/projects/store/projects.store';
     </div>
   `
 })
-export class PerformanceOverlay implements OnInit, OnDestroy {
+export class PerformanceOverlay implements OnDestroy {
   readonly bugStore = inject(BugsStore);
   readonly projectStore = inject(ProjectsStore);
   private readonly ngZone = inject(NgZone);
@@ -90,11 +90,12 @@ export class PerformanceOverlay implements OnInit, OnDestroy {
   private lastTime = performance.now();
   private rafId?: number;
 
-  ngOnInit() {
+  private startMetricsLoop(): void {
+    if (this.rafId) return;
     this.ngZone.runOutsideAngular(() => {
       const updateMetrics = () => {
         if (!this.isVisible()) {
-          this.rafId = requestAnimationFrame(updateMetrics);
+          this.rafId = undefined;
           return;
         }
 
@@ -105,7 +106,7 @@ export class PerformanceOverlay implements OnInit, OnDestroy {
           const calculatedFps = Math.round((this.frameCount * 1000) / (now - this.lastTime));
           this.ngZone.run(() => {
             this.fps.set(calculatedFps);
-            this.latency.set(Math.floor(Math.random() * 5) + 5); // Still mock latency as it's harder to measure without a real backend
+            this.latency.set(Math.floor(Math.random() * 5) + 5);
             this.cycles.update(c => c + 1);
           });
           
@@ -127,6 +128,9 @@ export class PerformanceOverlay implements OnInit, OnDestroy {
   }
 
   toggle(): void {
-    this.isVisible.update(v => !v);
+    this.isVisible.update(v => {
+      if (!v) this.startMetricsLoop();
+      return !v;
+    });
   }
 }

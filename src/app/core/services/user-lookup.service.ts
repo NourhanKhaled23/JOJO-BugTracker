@@ -7,14 +7,15 @@ export class UserLookupService {
   private readonly store = inject(MembersStore);
   private memberMap = new Map<string, Member>();
 
-  readonly members = computed(() => {
-    const list = this.store.members();
+  private rebuildMap(list: Member[]): Member[] {
     this.memberMap.clear();
     for (const m of list) {
       this.memberMap.set(m.id, m);
     }
     return list;
-  });
+  }
+
+  readonly members = computed(() => this.rebuildMap(this.store.members()));
 
   getName(id: string | null | undefined): string {
     if (!id) return 'Unassigned';
