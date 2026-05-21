@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LucideAngularModule, LucideIconData, Search, Command, ArrowRight, Bug, Folder, Users, Settings } from 'lucide-angular';
 import { BugsStore } from '../../../features/bugs/store/bugs.store';
 import { ProjectsStore } from '../../../features/projects/store/projects.store';
+import { CommandPaletteService } from '../../../core/services/command-palette.service';
 
 @Component({
   selector: 'app-command-palette',
@@ -89,34 +90,34 @@ export class CommandPalette {
   private readonly router = inject(Router);
   private readonly bugStore = inject(BugsStore);
   private readonly projectStore = inject(ProjectsStore);
+  private readonly paletteService = inject(CommandPaletteService);
 
   readonly Search = Search;
   readonly Command = Command;
   readonly ArrowRight = ArrowRight;
 
-  isOpen = signal(false);
+  readonly isOpen = this.paletteService.isOpen;
   query = signal('');
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
       event.preventDefault();
-      this.toggle();
+      this.paletteService.toggle();
+      if (this.isOpen()) this.query.set('');
     }
     if (event.key === 'Escape' && this.isOpen()) {
-      this.close();
+      this.paletteService.close();
     }
   }
 
   toggle(): void {
-    this.isOpen.update(v => !v);
-    if (this.isOpen()) {
-      this.query.set('');
-    }
+    this.paletteService.toggle();
+    if (this.isOpen()) this.query.set('');
   }
 
   close(): void {
-    this.isOpen.set(false);
+    this.paletteService.close();
   }
 
   updateQuery(val: string): void {

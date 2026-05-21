@@ -9,6 +9,7 @@ import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Role } from '../../core/enums/role';
 import { Logo } from '../../shared/components/logo/logo';
+import { CommandPaletteService } from '../../core/services/command-palette.service';
 
 @Component({
   selector: 'app-topbar',
@@ -23,6 +24,7 @@ export class Topbar {
   private readonly router = inject(Router);
   readonly themeService = inject(ThemeService);
   readonly notifService = inject(NotificationService);
+  readonly paletteService = inject(CommandPaletteService);
 
   readonly Menu = Menu;
   readonly Bell = Bell;
@@ -51,10 +53,12 @@ export class Topbar {
     this.authStore.user()?.role === Role.Admin || this.authStore.user()?.role === Role.Owner
   );
 
-  // Signals — required for OnPush to detect changes
+  // Signals
   showUserMenu = signal(false);
   showThemeMenu = signal(false);
   showNotifPanel = signal(false);
+  showMobileNav = signal(false);
+  hasScrolled = signal(false);
 
   // Breadcrumb — reactive to route changes
   currentPage = signal('Dashboard');
@@ -76,7 +80,21 @@ export class Topbar {
         const url: string = e.urlAfterRedirects;
         const match = Object.keys(this.routeLabels).find(k => url.startsWith(k));
         this.currentPage.set(match ? this.routeLabels[match] : 'BugTrackr');
+        this.showMobileNav.set(false);
       });
+  }
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.hasScrolled.set(window.scrollY > 10);
+  }
+
+  openCommandPalette(): void {
+    this.paletteService.toggle();
+  }
+
+  toggleMobileNav(): void {
+    this.showMobileNav.update(v => !v);
   }
 
   @HostListener('document:click', ['$event'])

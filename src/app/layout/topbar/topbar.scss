@@ -2,11 +2,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 7px 12px;
   border-radius: 10px;
   color: var(--text-secondary);
   transition: all 150ms;
   white-space: nowrap;
+  position: relative;
 
   &:hover {
     color: var(--text-primary);
@@ -39,12 +40,49 @@
   font-size: 0.8125rem;
 }
 
+/* Active indicator dot */
+.topbar-active-dot {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transition: transform 200ms;
+}
+
+/* Active state via :host ::ng-deep */
 :host ::ng-deep .topbar-active {
   color: var(--accent) !important;
   background: rgb(from var(--accent) r g b / 0.1) !important;
 
   .topbar-nav-icon {
     color: var(--accent) !important;
+  }
+
+  .topbar-active-dot {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* Mobile active state */
+:host ::ng-deep .topbar-active-mobile {
+  color: var(--accent) !important;
+  background: rgb(from var(--accent) r g b / 0.1) !important;
+}
+
+/* Responsive: show only icons on tablet */
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .topbar-nav-label {
+    display: none;
+  }
+
+  .topbar-nav-item {
+    padding: 8px;
+    border-radius: 10px;
   }
 }
 

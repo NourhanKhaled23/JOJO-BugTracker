@@ -1,15 +1,27 @@
-<header class="h-16 glass border-b border-border px-4 lg:px-6 flex items-center justify-between sticky top-0 z-50">
-  <!-- Left: Logo + Nav -->
+<header class="h-16 glass border-b border-border px-4 lg:px-6 flex items-center justify-between sticky top-0 z-50 transition-shadow duration-300"
+  [class.shadow-lg]="hasScrolled()"
+  [class.shadow-accent/5]="hasScrolled()">
+
+  <!-- Left: Mobile menu + Logo + Nav -->
   <div class="flex items-center gap-1 lg:gap-2">
+    <!-- Mobile hamburger -->
+    <button (click)="toggleMobileNav()"
+      class="p-2 rounded-xl text-text-muted hover:bg-bg-hover hover:text-text-primary transition-all lg:hidden">
+      <lucide-icon [name]="Menu" [size]="20"></lucide-icon>
+    </button>
+
     <app-logo width="120" height="28" class="hidden sm:block mr-2 lg:mr-4"></app-logo>
     <div class="h-6 w-px bg-border/50 hidden sm:block mr-2 lg:mr-4"></div>
-    <nav class="flex items-center gap-0.5">
+
+    <!-- Desktop Nav -->
+    <nav class="hidden lg:flex items-center gap-0.5">
       @for (item of navItems; track item.route) {
         <a [routerLink]="item.route" routerLinkActive="topbar-active"
           [routerLinkActiveOptions]="{exact: item.exact}"
           class="topbar-nav-item group">
           <lucide-icon [name]="item.icon" [size]="16" class="topbar-nav-icon"></lucide-icon>
           <span class="topbar-nav-label">{{ item.label }}</span>
+          <span class="topbar-active-dot"></span>
         </a>
       }
       @if (isAdmin()) {
@@ -17,6 +29,7 @@
           class="topbar-nav-item topbar-admin group">
           <lucide-icon [name]="ShieldAlert" [size]="16" class="topbar-nav-icon"></lucide-icon>
           <span class="topbar-nav-label">Admin</span>
+          <span class="topbar-active-dot"></span>
         </a>
       }
     </nav>
@@ -26,10 +39,15 @@
   <div class="flex items-center gap-2 sm:gap-3">
 
     <!-- Search / Command Palette -->
-    <button class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-bg-elevated border border-border rounded-lg text-sm text-text-muted hover:text-text-primary hover:border-accent/50 transition-colors">
+    <button (click)="openCommandPalette()"
+      class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-bg-elevated border border-border rounded-lg text-sm text-text-muted hover:text-text-primary hover:border-accent/50 transition-colors cursor-pointer">
       <lucide-icon [name]="Search" [size]="14"></lucide-icon>
       <span class="mr-4">Search...</span>
       <kbd class="px-1.5 py-0.5 rounded bg-bg-surface border border-border text-[10px] font-bold font-mono">Ctrl+K</kbd>
+    </button>
+    <button (click)="openCommandPalette()"
+      class="md:hidden p-2 rounded-xl text-text-muted hover:bg-bg-hover hover:text-text-primary transition-all">
+      <lucide-icon [name]="Search" [size]="18"></lucide-icon>
     </button>
 
     <!-- Theme Switcher -->
@@ -118,7 +136,7 @@
       }
     </div>
 
-    <div class="w-px h-6 bg-border mx-1 hidden sm:block"></div>
+    <div class="w-px h-6 bg-border mx-0.5 hidden sm:block"></div>
 
     <!-- User Menu -->
     <div class="relative menu-container">
@@ -155,3 +173,31 @@
     </div>
   </div>
 </header>
+
+<!-- Mobile Nav Drawer -->
+@if (showMobileNav()) {
+<div class="fixed inset-0 z-40 lg:hidden">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="showMobileNav.set(false)" (keydown.escape)="showMobileNav.set(false)" tabindex="0"></div>
+  <div class="absolute top-16 left-0 right-0 bg-bg-surface border-b border-border shadow-2xl animate-in slide-in-from-top duration-200 p-4">
+    <nav class="flex flex-col gap-1">
+      @for (item of navItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="topbar-active-mobile"
+          [routerLinkActiveOptions]="{exact: item.exact}"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-all text-sm font-semibold"
+          (click)="showMobileNav.set(false)">
+          <lucide-icon [name]="item.icon" [size]="18" class="text-text-muted"></lucide-icon>
+          {{ item.label }}
+        </a>
+      }
+      @if (isAdmin()) {
+        <a routerLink="/admin" routerLinkActive="topbar-active-mobile"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-error hover:bg-error/10 transition-all text-sm font-semibold"
+          (click)="showMobileNav.set(false)">
+          <lucide-icon [name]="ShieldAlert" [size]="18"></lucide-icon>
+          Admin
+        </a>
+      }
+    </nav>
+  </div>
+</div>
+}
