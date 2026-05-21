@@ -1,0 +1,1 @@
+import{P as i,ia as o}from"./chunk-EOUF2CXV.js";var n=class e{isOpen=o(!1);toggle(){this.isOpen.update(t=>!t)}open(){this.isOpen.set(!0)}close(){this.isOpen.set(!1)}static \u0275fac=function(s){return new(s||e)};static \u0275prov=i({token:e,factory:e.\u0275fac,providedIn:"root"})};export{n as a};
