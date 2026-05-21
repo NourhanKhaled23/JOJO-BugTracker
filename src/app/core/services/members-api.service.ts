@@ -17,9 +17,9 @@ const STORAGE_KEY = 'bugtrackr_members';
 const DEFAULT_MEMBERS: Member[] = [
   { id: 'u1', name: 'Jane Doe', email: 'jane.doe@example.com', role: 'Admin', status: 'Active', initials: 'JD', color: 'var(--accent)' },
   { id: 'u2', name: 'John Smith', email: 'john.smith@example.com', role: 'Developer', status: 'Active', initials: 'JS', color: 'var(--success)' },
-  { id: 'u3', name: 'Emily Chen', email: 'emily.chen@example.com', role: 'Designer', status: 'Away', initials: 'EC', color: 'var(--warning)' },
+  { id: 'u3', name: 'Emily Chen', email: 'emily.chen@example.com', role: 'Viewer', status: 'Away', initials: 'EC', color: 'var(--warning)' },
   { id: 'u4', name: 'Michael Brown', email: 'michael.b@example.com', role: 'Developer', status: 'Offline', initials: 'MB', color: 'var(--text-muted)' },
-  { id: 'u5', name: 'Sarah Wilson', email: 'sarah.w@example.com', role: 'Project Manager', status: 'Active', initials: 'SW', color: 'var(--info)' },
+  { id: 'u5', name: 'Sarah Wilson', email: 'sarah.w@example.com', role: 'Admin', status: 'Active', initials: 'SW', color: 'var(--info)' },
 ];
 
 @Injectable({ providedIn: 'root' })

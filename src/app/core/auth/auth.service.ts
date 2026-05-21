@@ -43,7 +43,7 @@ export class AuthService {
             fullName: found.fullName,
             email: found.email,
             avatarUrl: null,
-            role: found.role || Role.Developer,
+            role: found.role?.toLowerCase() || Role.Developer,
             createdAt: new Date().toISOString()
           };
           if (membersRaw) {
@@ -51,7 +51,7 @@ export class AuthService {
             const mem = members.find((m: { email: string }) => m.email === email);
             if (mem) {
               user.fullName = mem.name;
-              user.role = Role[mem.role as keyof typeof Role] || mem.role.toLowerCase();
+              user.role = mem.role?.toLowerCase();
             }
           }
           return { user, error: null };

@@ -13,7 +13,7 @@ import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-di
 import { MembersStore } from './store/members.store';
 import { Member } from '../../core/services/members-api.service';
 
-const ROLES = ['Admin', 'Developer', 'Designer', 'Project Manager', 'Viewer'];
+const ROLES = ['Admin', 'Developer', 'Viewer'];
 
 @Component({
   selector: 'app-members',

@@ -122,7 +122,7 @@ export class Register {
           return;
         }
 
-        users.push({ id: mockUser.id, fullName, email, role: 'Developer' });
+        users.push({ id: mockUser.id, fullName, email, role: Role.Developer });
         localStorage.setItem('bugtrackr_users', JSON.stringify(users));
       } catch {
         // Ignore parsing errors
