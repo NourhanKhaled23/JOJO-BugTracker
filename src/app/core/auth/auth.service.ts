@@ -17,11 +17,11 @@ export class AuthService {
 
   loginWithCredentials(email: string, password: string): { user: User | null; error: string | null } {
     // 1. Check Demo Account
-    if (email === 'test@test.com' && password === 'password') {
+    if (email === 'MohamedTarek@test.com' && password === 'password') {
       const user: User = {
         id: '1',
-        fullName: 'Demo Admin',
-        email: 'test@test.com',
+        fullName: 'Mohamed Tarek',
+        email: 'MohamedTarek@test.com',
         avatarUrl: null,
         role: Role.Admin,
         createdAt: new Date().toISOString()

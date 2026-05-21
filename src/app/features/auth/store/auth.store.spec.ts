@@ -22,7 +22,7 @@ describe('AuthStore', () => {
     const user: User = {
       id: '1',
       fullName: 'Test User',
-      email: 'test@test.com',
+      email: 'MohamedTarek@test.com',
       avatarUrl: null,
       role: Role.Admin,
       createdAt: new Date().toISOString()
