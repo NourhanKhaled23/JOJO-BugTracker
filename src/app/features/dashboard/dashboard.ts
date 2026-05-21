@@ -125,11 +125,18 @@ export class Dashboard {
   };
 
   public lineChartData = computed<ChartData<'line'>>(() => {
+    const bugs = this.bugStore.bugs();
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const counts = [0, 0, 0, 0, 0, 0, 0];
+    for (const bug of bugs) {
+      const day = new Date(bug.createdAt).getDay();
+      counts[day]++;
+    }
     return {
       labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       datasets: [{
         label: 'Bugs Created',
-        data: [2, 5, 3, 7, 4, 6, 8],
+        data: [counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[0]],
         borderColor: '#3B82F6',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         fill: true,
@@ -161,16 +168,17 @@ export class Dashboard {
   public barChartData = computed<ChartData<'bar'>>(() => {
     const bugs = this.bugStore.bugs();
     return {
-      labels: ['Open', 'In Progress', 'Testing', 'Closed'],
+      labels: ['Open', 'In Progress', 'Testing', 'Blocked', 'Closed'],
       datasets: [{
         label: 'Bugs by Status',
         data: [
           this.bugStore.openBugsCount(),
           this.bugStore.inProgressCount(),
           bugs.filter(b => b.status === 'testing').length,
+          bugs.filter(b => b.status === 'blocked').length,
           bugs.filter(b => b.status === 'closed').length
         ],
-        backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#10B981'],
+        backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#6B7280', '#10B981'],
         borderRadius: 8
       }]
     };

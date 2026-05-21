@@ -128,6 +128,24 @@ export class Register {
         // Ignore parsing errors
       }
 
+      // Sync to team members
+      try {
+        const membersRaw = localStorage.getItem('bugtrackr_members');
+        const members = membersRaw ? JSON.parse(membersRaw) : [];
+        if (!members.some((m: { id: string }) => m.id === mockUser.id)) {
+          const initials = fullName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
+          const colors = ['var(--accent)', 'var(--success)', 'var(--warning)', 'var(--info)', 'var(--error)'];
+          members.push({
+            id: mockUser.id, name: fullName, email, role: Role.Developer,
+            status: 'Pending', initials,
+            color: colors[Math.floor(Math.random() * colors.length)]
+          });
+          localStorage.setItem('bugtrackr_members', JSON.stringify(members));
+        }
+      } catch {
+        // Storage unavailable
+      }
+
       this.authStore.login('mock-jwt-token-new', mockUser);
     }, 1500);
   }

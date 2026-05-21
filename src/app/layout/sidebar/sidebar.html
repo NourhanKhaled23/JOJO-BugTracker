@@ -17,9 +17,10 @@
   </div>
 
   <!-- Main Navigation -->
-  <div class="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1 scrollbar-thin" [@listAnimation]="navItems.length">
+  <div class="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1 scrollbar-thin" [@listAnimation]="navItems().length">
 
-    @for (item of navItems; track item.route) {
+    @for (item of navItems(); track item.route) {
+      @if (item.show) {
       <a
         [routerLink]="item.route"
         routerLinkActive="active-nav"
@@ -33,6 +34,7 @@
           <span class="tooltip">{{ item.label }}</span>
         }
       </a>
+      }
     }
 
     <!-- Admin Link -->

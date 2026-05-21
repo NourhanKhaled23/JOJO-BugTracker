@@ -70,6 +70,14 @@ export const AuthStore = signalStore(
       });
       router.navigate(['/auth/login']);
     },
+    updateProfile(updated: User): void {
+      try {
+        sessionStorage.setItem('bugtrackr_user', JSON.stringify(updated));
+      } catch {
+        // Storage unavailable
+      }
+      patchState(store, { user: updated });
+    },
     setLoading(isLoading: boolean): void {
       patchState(store, { isLoading });
     },

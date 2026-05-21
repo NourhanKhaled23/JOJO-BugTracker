@@ -1,6 +1,6 @@
 import { Component, signal, computed, ChangeDetectionStrategy, inject, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Search, Plus, MoreHorizontal, User, Mail, Shield, ShieldAlert, CheckCircle2, X, Trash2, Edit2, Check, Bug } from 'lucide-angular';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { LucideAngularModule, Search, Plus, MoreHorizontal, User, Mail, Shield, ShieldAlert, CheckCircle2, X, Trash2, Edit2, Check, Bug, Loader2 } from 'lucide-angular';
 import { listAnimation, slideInAnimation } from '../../core/animations/ui.animations';
 import { ToastService } from '../../core/services/toast.service';
 import { RbacService } from '../../core/services/rbac.service';
@@ -8,17 +8,19 @@ import { ActivityService } from '../../core/services/activity.service';
 import { AuthStore } from '../../core/stores/auth.store';
 import { NotificationService } from '../../core/services/notification.service';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { EmailService } from '../../core/services/email.service';
 
 import { MembersStore } from './store/members.store';
 import { Member } from '../../core/services/members-api.service';
 import { BugsStore } from '../bugs/store/bugs.store';
+import { Role } from '../../core/enums/role';
 
-const ROLES = ['Admin', 'Developer', 'Viewer'];
+const ROLES: Role[] = [Role.Admin, Role.Developer, Role.Viewer];
 
 @Component({
   selector: 'app-members',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, ConfirmDialog],
+  imports: [CommonModule, LucideAngularModule, ConfirmDialog, TitleCasePipe],
   templateUrl: './members.html',
   styleUrl: './members.scss',
   animations: [listAnimation, slideInAnimation],
@@ -30,6 +32,7 @@ export class Members {
   private readonly activity = inject(ActivityService);
   private readonly authStore = inject(AuthStore);
   private readonly notifService = inject(NotificationService);
+  private readonly emailService = inject(EmailService);
   readonly store = inject(MembersStore);
   readonly bugStore = inject(BugsStore);
 
@@ -46,6 +49,7 @@ export class Members {
   readonly Edit2 = Edit2;
   readonly Check = Check;
   readonly Bug = Bug;
+  readonly Loader2 = Loader2;
 
   readonly roles = ROLES;
 
@@ -55,10 +59,22 @@ export class Members {
   openMenuId = signal<string | null>(null);
   removingMemberId = signal<string | null>(null);
   showAssignModal = signal<string | null>(null);
+  isSendingInvite = signal(false);
 
   assignableBugs = computed(() =>
     this.bugStore.bugs().filter(b => b.status !== 'closed')
   );
+
+  assignedBugCount = computed(() => {
+    const bugs = this.bugStore.bugs();
+    const counts = new Map<string, number>();
+    for (const b of bugs) {
+      if (b.assigneeId) {
+        counts.set(b.assigneeId, (counts.get(b.assigneeId) || 0) + 1);
+      }
+    }
+    return counts;
+  });
 
   removingMemberName = computed(() => {
     const id = this.removingMemberId();
@@ -69,14 +85,14 @@ export class Members {
   // Invite form
   inviteName = signal('');
   inviteEmail = signal('');
-  inviteRole = signal('Developer');
+  inviteRole = signal<Role>(Role.Developer);
 
   filteredMembers = computed(() => {
     const query = this.searchQuery().toLowerCase();
     return this.store.members().filter((m: Member) =>
       m.name.toLowerCase().includes(query) ||
       m.email.toLowerCase().includes(query) ||
-      m.role.toLowerCase().includes(query)
+      m.role.includes(query)
     );
   });
 
@@ -86,7 +102,7 @@ export class Members {
   openInviteModal(): void {
     this.inviteName.set('');
     this.inviteEmail.set('');
-    this.inviteRole.set('Developer');
+    this.inviteRole.set(Role.Developer);
     this.showInviteModal.set(true);
   }
 
@@ -96,7 +112,10 @@ export class Members {
     if (!email || !name) {
       this.toast.show('Name and email are required', 'error'); return;
     }
-    if (this.store.members().some((m: Member) => m.email === email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.toast.show('Please enter a valid email address', 'error'); return;
+    }
+    if (this.store.members().some((m: Member) => m.email.toLowerCase() === email.toLowerCase())) {
       this.toast.show('A member with this email already exists', 'error'); return;
     }
     const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -110,16 +129,46 @@ export class Members {
       initials,
       color: colors[Math.floor(Math.random() * colors.length)]
     };
-    
-    this.store.inviteMember(newMember);
 
-    this.activity.log({
-      type: 'member_invited', entityId: newMember.id, entityTitle: name,
-      userId: this.authStore.user()?.id || 'me', userName: this.authStore.user()?.fullName || 'You',
-      description: `Invited ${name} as ${this.inviteRole()}`
+    this.isSendingInvite.set(true);
+
+    const inviteLink = `${window.location.origin}/auth/register?email=${encodeURIComponent(email)}&team=bugtrackr`;
+    const fromName = this.authStore.user()?.fullName || 'A team member';
+
+    this.emailService.sendInvite({
+      to_name: name,
+      to_email: email,
+      from_name: fromName,
+      invite_link: inviteLink,
+      role: this.inviteRole()
+    }).then(() => {
+      this.store.inviteMember(newMember);
+      this.activity.log({
+        type: 'member_invited', entityId: newMember.id, entityTitle: name,
+        userId: this.authStore.user()?.id || 'me', userName: this.authStore.user()?.fullName || 'You',
+        description: `Invited ${name} as ${this.inviteRole()}`
+      });
+      this.notifService.push({ title: 'Member Invited', message: `${name} has been invited as ${this.inviteRole()}`, type: 'success' });
+      this.toast.show(`Invitation sent to ${email}`, 'success');
+      this.showInviteModal.set(false);
+    }).catch((err) => {
+      const msg = err instanceof Error ? err.message : 'Failed to send invitation email';
+      if (!this.emailService.isConfigured) {
+        this.toast.show('Email service not configured. See environment.ts to set up EmailJS.', 'warning');
+      } else {
+        this.toast.show(msg, 'error');
+      }
+      this.store.inviteMember(newMember);
+      this.activity.log({
+        type: 'member_invited', entityId: newMember.id, entityTitle: name,
+        userId: this.authStore.user()?.id || 'me', userName: this.authStore.user()?.fullName || 'You',
+        description: `Invited ${name} as ${this.inviteRole()}`
+      });
+      this.notifService.push({ title: 'Member Invited (email failed)', message: `${name} was added but the email could not be sent.`, type: 'warning' });
+      this.showInviteModal.set(false);
+    }).finally(() => {
+      this.isSendingInvite.set(false);
     });
-    this.notifService.push({ title: 'Member Invited', message: `${name} has been invited as ${this.inviteRole()}`, type: 'success' });
-    this.showInviteModal.set(false);
   }
 
   @HostListener('document:keydown.escape')
@@ -128,6 +177,17 @@ export class Members {
     this.openMenuId.set(null);
     this.editingMemberId.set(null);
     this.showAssignModal.set(null);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent): void {
+    if (this.openMenuId() !== null) {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-menu]')) {
+        this.openMenuId.set(null);
+        this.editingMemberId.set(null);
+      }
+    }
   }
 
   openAssignModal(memberId: string): void {
@@ -140,6 +200,11 @@ export class Members {
     if (!bug) return;
     const member = this.store.members().find(m => m.id === memberId);
     if (!member) return;
+    if (bug.assigneeId === memberId) {
+      this.toast.show(`${member.name} is already assigned to "${bug.title}"`, 'warning');
+      this.showAssignModal.set(null);
+      return;
+    }
     this.bugStore.updateBug({ ...bug, assigneeId: memberId, updatedAt: new Date().toISOString() });
     this.toast.show(`Assigned ${member.name} to "${bug.title}"`, 'success');
     this.activity.log({
@@ -151,12 +216,20 @@ export class Members {
   }
 
   changeRole(memberId: string, role: string): void {
-    this.store.updateRole({id: memberId, role});
+    if (!ROLES.includes(role as Role)) {
+      this.toast.show('Invalid role selected', 'error');
+      return;
+    }
+    this.store.updateRole({id: memberId, role: role as Role});
     this.editingMemberId.set(null);
     this.openMenuId.set(null);
   }
 
   removeMember(memberId: string): void {
+    if (this.authStore.user()?.id === memberId) {
+      this.toast.show('You cannot remove yourself from the team', 'error');
+      return;
+    }
     this.removingMemberId.set(memberId);
     this.openMenuId.set(null);
   }
@@ -166,7 +239,12 @@ export class Members {
     const member = this.store.members().find((m: Member) => m.id === memberId);
     if (!member || !memberId) return;
     
-    this.store.removeMember(memberId);
+    this.store.removeMember({ id: memberId, name: member.name });
+
+    const bugsToUnassign = this.bugStore.bugs().filter(b => b.assigneeId === memberId);
+    for (const bug of bugsToUnassign) {
+      this.bugStore.updateBug({ ...bug, assigneeId: null, updatedAt: new Date().toISOString() });
+    }
 
     this.activity.log({
       type: 'member_removed', entityId: memberId, entityTitle: member.name,
@@ -174,7 +252,6 @@ export class Members {
       description: `Removed ${member.name} from the team`
     });
     this.removingMemberId.set(null);
-    this.toast.show(`${member.name} removed`, 'info');
   }
 
   toggleMenu(id: string): void {

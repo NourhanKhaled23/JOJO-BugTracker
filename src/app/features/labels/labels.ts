@@ -2,7 +2,6 @@ import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Tag, Plus, Trash2, Edit2, Check, X } from 'lucide-angular';
 import { BugsStore } from '../bugs/store/bugs.store';
-import { ToastService } from '../../core/services/toast.service';
 import { RbacService } from '../../core/services/rbac.service';
 import { BugLabel } from '../../core/models/bug.model';
 import { listAnimation, slideInAnimation } from '../../core/animations/ui.animations';
@@ -20,7 +19,6 @@ const PRESET_COLORS = ['#7C3AED','#10B981','#F59E0B','#EF4444','#EC4899','#6366F
 })
 export class Labels {
   readonly store = inject(BugsStore);
-  readonly toast = inject(ToastService);
   readonly rbac = inject(RbacService);
 
   readonly Plus = Plus;
@@ -54,7 +52,6 @@ export class Labels {
     this.store.addLabel(label);
     this.newName.set('');
     this.showCreate.set(false);
-    this.toast.show('Label created', 'success');
   }
 
   startEdit(label: BugLabel): void {
@@ -67,7 +64,6 @@ export class Labels {
     if (!this.editName().trim()) return;
     this.store.updateLabel({ id, name: this.editName().trim(), color: this.editColor() });
     this.editingId.set(null);
-    this.toast.show('Label updated', 'success');
   }
 
   deleteLabel(id: string): void {
@@ -79,6 +75,5 @@ export class Labels {
     if (!id) return;
     this.store.deleteLabel(id);
     this.deletingLabelId.set(null);
-    this.toast.show('Label deleted', 'info');
   }
 }

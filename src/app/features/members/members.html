@@ -34,6 +34,16 @@
       </div>
       }
 
+      <!-- Error State -->
+      @if (store.error(); as error) {
+      <div class="bg-error/10 border border-error/20 rounded-2xl p-4 text-error text-sm font-medium mb-6 flex items-center justify-between">
+        <span>{{ error }}</span>
+        <button (click)="store.loadMembers()" class="px-3 py-1 text-xs font-bold border border-error/30 rounded-lg hover:bg-error hover:text-white transition-all">
+          Retry
+        </button>
+      </div>
+      }
+
       <!-- Stats Row -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8" [@slideInAnimation]>
         <div class="glass border border-border rounded-2xl p-6 flex items-center gap-4">
@@ -68,7 +78,7 @@
       <!-- Members Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" [@listAnimation]="filteredMembers().length">
         @for (member of filteredMembers(); track member.id) {
-          <div class="glass-card hover:lift transition-all p-6 relative group overflow-hidden">
+          <div class="glass-card hover:lift transition-all p-6 relative group">
             <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-20 blur-2xl" [style.background-color]="member.color"></div>
 
             <div class="flex justify-between items-start mb-4 relative z-10">
@@ -85,10 +95,10 @@
               </div>
 
               <!-- Action Menu -->
-              <div class="relative">
+              <div class="relative" data-menu>
                 @if (rbac.canAny('member:edit-role', 'member:remove')) {
                 <button (click)="toggleMenu(member.id)"
-                  class="p-2 rounded-lg hover:bg-bg-hover text-text-muted transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+                  class="p-2 rounded-lg hover:bg-bg-hover text-text-muted transition-colors opacity-40 hover:opacity-100 focus:opacity-100">
                   <lucide-icon [name]="MoreHorizontal" [size]="20"></lucide-icon>
                 </button>
                 }
@@ -120,7 +130,7 @@
               </div>
             </div>
 
-            <div class="relative z-10">
+            <div>
               <h3 class="text-lg font-bold text-text-primary mb-1">{{ member.name }}</h3>
               <div class="flex items-center gap-1.5 text-xs text-text-secondary mb-4">
                 <lucide-icon [name]="Mail" [size]="12"></lucide-icon>
@@ -133,7 +143,7 @@
                 <select class="w-full bg-bg-elevated border border-accent rounded-lg px-3 py-1.5 text-xs focus:outline-none"
                   [value]="member.role" (change)="changeRole(member.id, $any($event.target).value)">
                   @for (role of roles; track role) {
-                    <option [value]="role">{{ role }}</option>
+                    <option [value]="role">{{ role | titlecase }}</option>
                   }
                 </select>
                 <button (click)="editingMemberId.set(null)" class="mt-1 text-xs text-text-muted hover:text-text-primary transition-colors">Cancel</button>
@@ -142,20 +152,27 @@
 
               <div class="flex items-center justify-between pt-4 border-t border-border/50">
                 <div class="flex items-center gap-1.5 text-xs font-bold text-text-muted uppercase tracking-wider">
-                  <lucide-icon [name]="Shield" [size]="12" [class.text-accent]="member.role === 'Admin'"></lucide-icon>
-                  {{ member.role }}
+                  <lucide-icon [name]="Shield" [size]="12" [class.text-accent]="member.role === 'admin'"></lucide-icon>
+                  {{ member.role | titlecase }}
                 </div>
-                <span class="text-xs px-2 py-0.5 rounded-full font-bold"
-                  [class.bg-success/10]="member.status === 'Active'"
-                  [class.text-success]="member.status === 'Active'"
-                  [class.bg-warning/10]="member.status === 'Away'"
-                  [class.text-warning]="member.status === 'Away'"
-                  [class.bg-info/10]="member.status === 'Pending'"
-                  [class.text-info]="member.status === 'Pending'"
-                  [class.bg-bg-elevated]="member.status === 'Offline'"
-                  [class.text-text-muted]="member.status === 'Offline'">
-                  {{ member.status }}
-                </span>
+                <div class="flex items-center gap-2">
+                  @if (assignedBugCount().get(member.id)) {
+                  <span class="text-xs px-2 py-0.5 rounded-full font-bold bg-accent/10 text-accent">
+                    {{ assignedBugCount().get(member.id) }} bug{{ assignedBugCount().get(member.id)! > 1 ? 's' : '' }}
+                  </span>
+                  }
+                  <span class="text-xs px-2 py-0.5 rounded-full font-bold"
+                    [class.bg-success/10]="member.status === 'Active'"
+                    [class.text-success]="member.status === 'Active'"
+                    [class.bg-warning/10]="member.status === 'Away'"
+                    [class.text-warning]="member.status === 'Away'"
+                    [class.bg-info/10]="member.status === 'Pending'"
+                    [class.text-info]="member.status === 'Pending'"
+                    [class.bg-bg-elevated]="member.status === 'Offline'"
+                    [class.text-text-muted]="member.status === 'Offline'">
+                    {{ member.status }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -205,20 +222,25 @@
         <select id="invite-role" [value]="inviteRole()" (change)="inviteRole.set($any($event.target).value)"
           class="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors">
           @for (role of roles; track role) {
-            <option [value]="role">{{ role }}</option>
+            <option [value]="role">{{ role | titlecase }}</option>
           }
         </select>
       </div>
     </div>
 
     <div class="flex gap-3 mt-8">
-      <button (click)="showInviteModal.set(false)"
-        class="flex-1 py-3 rounded-xl border border-border font-bold text-sm hover:bg-bg-hover transition-colors">
+      <button (click)="showInviteModal.set(false)" [disabled]="isSendingInvite()"
+        class="flex-1 py-3 rounded-xl border border-border font-bold text-sm hover:bg-bg-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
         Cancel
       </button>
-      <button (click)="inviteMember()"
-        class="flex-1 py-3 bg-accent text-white rounded-xl font-bold text-sm hover:bg-accent-bright transition-all shadow-lg shadow-accent/20">
-        Send Invite
+      <button (click)="inviteMember()" [disabled]="isSendingInvite()"
+        class="flex-1 py-3 bg-accent text-white rounded-xl font-bold text-sm hover:bg-accent-bright transition-all shadow-lg shadow-accent/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+        @if (isSendingInvite()) {
+        <lucide-icon [name]="Loader2" [size]="16" class="animate-spin"></lucide-icon>
+        <span>Sending...</span>
+        } @else {
+        <span>Send Invite</span>
+        }
       </button>
     </div>
   </div>
@@ -228,7 +250,7 @@
 <!-- Assign to Bug Modal -->
 @if (showAssignModal(); as memberId) {
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="showAssignModal.set(null)" tabindex="0" (keydown.enter)="showAssignModal.set(null)"></div>
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="showAssignModal.set(null)" tabindex="0" (keydown.escape)="showAssignModal.set(null)"></div>
   <div class="relative bg-bg-surface border border-border rounded-2xl shadow-2xl w-full max-w-lg p-6 z-10 max-h-[70vh] flex flex-col">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-lg font-bold text-text-primary">Assign to Bug</h2>
@@ -240,13 +262,21 @@
     <div class="flex-1 overflow-y-auto space-y-2">
       @for (bug of assignableBugs(); track bug.id) {
         <button (click)="assignToBug(memberId, bug.id)"
-          class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-accent/10 border border-border hover:border-accent/30 transition-all text-left">
+          class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-accent/10 border border-border hover:border-accent/30 transition-all text-left"
+          [class.opacity-50]="bug.assigneeId === memberId"
+          [class.cursor-not-allowed]="bug.assigneeId === memberId">
           <div class="w-8 h-8 rounded-lg bg-bg-elevated flex items-center justify-center text-xs font-bold text-text-muted">
             <lucide-icon [name]="Bug" [size]="14"></lucide-icon>
           </div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-bold text-text-primary truncate">{{ bug.title }}</div>
-            <div class="text-[10px] text-text-muted mt-0.5">{{ bug.projectId }} · {{ bug.priority }}</div>
+            <div class="text-[10px] text-text-muted mt-0.5">
+              @if (bug.assigneeId === memberId) {
+                Already assigned
+              } @else {
+                {{ bug.projectId }} · {{ bug.priority }}
+              }
+            </div>
           </div>
         </button>
       }

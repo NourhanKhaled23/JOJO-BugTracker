@@ -3,6 +3,7 @@ import { computed, inject } from '@angular/core';
 import { Bug, BugStatus, BugPriority, BugLabel } from '../../../core/models/bug.model';
 import { BugCommentDisplay } from '../../../core/models/comment.model';
 import { BugsApiService } from '../../../core/services/bugs-api.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, mergeMap, tap, forkJoin } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
@@ -80,7 +81,7 @@ export const BugsStore = signalStore(
         !!f.dueDateFrom || !!f.dueDateTo;
     })
   })),
-  withMethods((store, bugsApi = inject(BugsApiService)) => ({
+  withMethods((store, bugsApi = inject(BugsApiService), toast = inject(ToastService)) => ({
     setSelectedBug(bug: Bug | null): void {
       patchState(store, { selectedBug: bug });
     },
@@ -304,26 +305,44 @@ export const BugsStore = signalStore(
 
     addLabel(label: BugLabel): void {
       bugsApi.addLabel(label).subscribe({
-        next: (saved) => patchState(store, (state) => ({ labels: [...state.labels, saved] })),
-        error: (err: Error) => patchState(store, { error: err.message })
+        next: (saved) => {
+          patchState(store, (state) => ({ labels: [...state.labels, saved] }));
+          toast.show('Label created', 'success');
+        },
+        error: (err: Error) => {
+          patchState(store, { error: err.message });
+          toast.show('Failed to create label', 'error');
+        }
       });
     },
 
     updateLabel(label: BugLabel): void {
       bugsApi.updateLabel(label.id, label).subscribe({
-        next: (saved) => patchState(store, (state) => ({
-          labels: state.labels.map(l => l.id === saved.id ? saved : l)
-        })),
-        error: (err: Error) => patchState(store, { error: err.message })
+        next: (saved) => {
+          patchState(store, (state) => ({
+            labels: state.labels.map(l => l.id === saved.id ? saved : l)
+          }));
+          toast.show('Label updated', 'success');
+        },
+        error: (err: Error) => {
+          patchState(store, { error: err.message });
+          toast.show('Failed to update label', 'error');
+        }
       });
     },
 
     deleteLabel(id: string): void {
       bugsApi.deleteLabel(id).subscribe({
-        next: () => patchState(store, (state) => ({
-          labels: state.labels.filter(l => l.id !== id)
-        })),
-        error: (err: Error) => patchState(store, { error: err.message })
+        next: () => {
+          patchState(store, (state) => ({
+            labels: state.labels.filter(l => l.id !== id)
+          }));
+          toast.show('Label deleted', 'info');
+        },
+        error: (err: Error) => {
+          patchState(store, { error: err.message });
+          toast.show('Failed to delete label', 'error');
+        }
       });
     },
 

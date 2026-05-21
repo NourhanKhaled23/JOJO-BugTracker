@@ -86,7 +86,7 @@ export class Settings {
         fullName: `${firstName} ${lastName}`.trim(),
         email
       };
-      this.authStore.login(localStorage.getItem('token') || '', updatedUser);
+      this.authStore.updateProfile(updatedUser);
     }
     this.toast.show('Profile updated successfully', 'success');
     this.notifService.push({

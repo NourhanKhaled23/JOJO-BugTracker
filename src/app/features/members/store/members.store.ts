@@ -5,6 +5,7 @@ import { pipe, tap, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MembersApiService, Member } from '../../../core/services/members-api.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { Role } from '../../../core/enums/role';
 
 export interface MembersState {
   members: Member[];
@@ -40,57 +41,55 @@ export const MembersStore = signalStore(
       ),
       inviteMember: rxMethod<Member>(
         pipe(
-          tap(() => patchState(store, { isLoading: true })),
           switchMap((member) => api.inviteMember(member).pipe(
             tapResponse({
               next: (newMember) => {
-                patchState(store, { members: [...store.members(), newMember], isLoading: false });
+                patchState(store, { members: [...store.members(), newMember] });
                 toast.show(`Invite sent to ${newMember.email}`, 'success');
               },
               error: (err: unknown) => {
                 const msg = err instanceof Error ? err.message : 'Failed to invite member';
-                patchState(store, { isLoading: false, error: msg });
+                patchState(store, { error: msg });
                 toast.show('Failed to invite member', 'error');
               }
             })
           ))
         )
       ),
-      updateRole: rxMethod<{id: string, role: string}>(
+      updateRole: rxMethod<{id: string, role: Role}>(
         pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
+          tap(() => patchState(store, { error: null })),
           switchMap(({id, role}) => api.updateRole(id, role).pipe(
             tapResponse({
               next: () => {
                 patchState(store, {
-                  members: store.members().map(m => m.id === id ? { ...m, role } : m),
-                  isLoading: false
+                  members: store.members().map(m => m.id === id ? { ...m, role } : m)
                 });
                 toast.show('Role updated successfully', 'success');
               },
               error: (err: unknown) => {
                 const msg = err instanceof Error ? err.message : 'Failed to update role';
-                patchState(store, { isLoading: false, error: msg });
+                patchState(store, { error: msg });
                 toast.show('Failed to update role', 'error');
               }
             })
           ))
         )
       ),
-      removeMember: rxMethod<string>(
+      removeMember: rxMethod<{id: string, name: string}>(
         pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap((id) => api.deleteMember(id).pipe(
+          tap(() => patchState(store, { error: null })),
+          switchMap(({id, name}) => api.deleteMember(id).pipe(
             tapResponse({
               next: () => {
                 patchState(store, {
-                  members: store.members().filter(m => m.id !== id),
-                  isLoading: false
+                  members: store.members().filter(m => m.id !== id)
                 });
+                toast.show(`${name} removed`, 'info');
               },
               error: (err: unknown) => {
                 const msg = err instanceof Error ? err.message : 'Failed to remove member';
-                patchState(store, { isLoading: false, error: msg });
+                patchState(store, { error: msg });
                 toast.show('Failed to remove member', 'error');
               }
             })

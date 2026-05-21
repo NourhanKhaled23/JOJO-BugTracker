@@ -5,6 +5,7 @@ import { LucideAngularModule, LayoutDashboard, FolderKanban, Bug, Users, Setting
 import { listAnimation } from '../../core/animations/ui.animations';
 import { AuthStore } from '../../core/stores/auth.store';
 import { ProjectsStore } from '../../features/projects/store/projects.store';
+import { RbacService } from '../../core/services/rbac.service';
 import { Role } from '../../core/enums/role';
 import { Logo } from '../../shared/components/logo/logo';
 
@@ -22,6 +23,7 @@ export class Sidebar {
 
   readonly authStore = inject(AuthStore);
   private readonly projectsStore = inject(ProjectsStore);
+  readonly rbac = inject(RbacService);
 
   readonly LayoutDashboard = LayoutDashboard;
   readonly FolderKanban = FolderKanban;
@@ -33,14 +35,14 @@ export class Sidebar {
   readonly ShieldAlert = ShieldAlert;
   readonly LogOut = LogOut;
 
-  readonly navItems = [
-    { label: 'Dashboard', icon: LayoutDashboard, route: '/dashboard', exact: true },
-    { label: 'Projects',  icon: FolderKanban,    route: '/projects',  exact: false },
-    { label: 'Issues',    icon: Bug,             route: '/bugs',      exact: false },
-    { label: 'Labels',    icon: Tag,             route: '/labels',    exact: false },
-    { label: 'Members',   icon: Users,           route: '/members',   exact: false },
-    { label: 'Settings',  icon: Settings,        route: '/settings',  exact: false },
-  ];
+  readonly navItems = computed(() => [
+    { label: 'Dashboard', icon: LayoutDashboard, route: '/dashboard', exact: true, show: true },
+    { label: 'Projects',  icon: FolderKanban,    route: '/projects',  exact: false, show: true },
+    { label: 'Issues',    icon: Bug,             route: '/bugs',      exact: false, show: true },
+    { label: 'Labels',    icon: Tag,             route: '/labels',    exact: false, show: true },
+    { label: 'Members',   icon: Users,           route: '/members',   exact: false, show: this.rbac.can('member:invite') },
+    { label: 'Settings',  icon: Settings,        route: '/settings',  exact: false, show: this.rbac.can('settings:edit') },
+  ]);
 
   readonly pinnedProjects = computed(() =>
     this.projectsStore.activeProjects().slice(0, 3)
