@@ -44,13 +44,15 @@ export class Dashboard {
     return Math.min(Math.round((total / 50) * 100), 100);
   });
 
+  readonly priorityLevels: ('critical' | 'high' | 'medium' | 'low')[] = ['critical', 'high', 'medium', 'low'];
+
   readonly priorityCounts = computed(() => {
     const bugs = this.bugStore.bugs();
     return {
-      critical: bugs.filter(b => b.priority === 'critical').length || 2,
-      high: bugs.filter(b => b.priority === 'high').length || 5,
-      medium: bugs.filter(b => b.priority === 'medium').length || 8,
-      low: bugs.filter(b => b.priority === 'low').length || 12,
+      critical: bugs.filter(b => b.priority === 'critical').length,
+      high: bugs.filter(b => b.priority === 'high').length,
+      medium: bugs.filter(b => b.priority === 'medium').length,
+      low: bugs.filter(b => b.priority === 'low').length,
     };
   });
 
@@ -131,6 +133,7 @@ export class Dashboard {
   };
 
   public barChartData = computed<ChartData<'bar'>>(() => {
+    const bugs = this.bugStore.bugs();
     return {
       labels: ['Open', 'In Progress', 'Testing', 'Closed'],
       datasets: [{
@@ -138,8 +141,8 @@ export class Dashboard {
         data: [
           this.bugStore.openBugsCount(),
           this.bugStore.inProgressCount(),
-          3,
-          10
+          bugs.filter(b => b.status === 'testing').length,
+          bugs.filter(b => b.status === 'closed').length
         ],
         backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#10B981'],
         borderRadius: 8

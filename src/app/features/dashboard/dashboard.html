@@ -121,7 +121,7 @@
         </div>
       </div>
       <div class="flex-1 grid grid-cols-2 gap-4 w-full">
-        @for (p of ['critical', 'high', 'medium', 'low']; track p) {
+        @for (p of priorityLevels; track p) {
           <div class="p-3 rounded-2xl bg-bg-elevated/30 border border-border/50 hover:border-accent/30 transition-colors">
             <div class="text-[10px] font-bold uppercase mb-1" 
                  [class.text-error]="p === 'critical'"
@@ -129,7 +129,7 @@
                  [class.text-info]="p === 'medium'"
                  [class.text-success]="p === 'low'">{{ p }}</div>
             <div class="text-lg font-black text-text-primary">
-              {{ priorityCounts()[p === 'critical' ? 'critical' : p === 'high' ? 'high' : p === 'medium' ? 'medium' : 'low'] }}
+              {{ priorityCounts()[p] }}
             </div>
           </div>
         }
@@ -153,7 +153,7 @@
             <div class="flex items-center gap-6 p-4 rounded-2xl hover:bg-bg-elevated/30 transition-all border border-transparent hover:border-border/50 group">
               <div class="w-2 h-10 bg-accent/20 rounded-full group-hover:bg-accent transition-colors flex-shrink-0"></div>
               <div class="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold flex-shrink-0">
-                {{ entry.userName.substring(0,2).toUpperCase() }}
+                {{ (entry.userName || '?').substring(0,2).toUpperCase() }}
               </div>
               <div class="flex-1 min-w-0">
                 <div class="text-sm text-text-primary font-medium truncate">
