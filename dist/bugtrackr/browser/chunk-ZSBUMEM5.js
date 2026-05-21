@@ -1,1 +1,0 @@
-import"./chunk-7CGTOI24.js";var o=[{path:"",loadComponent:()=>import("./chunk-LO2K2ABP.js").then(t=>t.BugList)},{path:"kanban",loadComponent:()=>import("./chunk-FS2MVAD2.js").then(t=>t.BugKanban)},{path:":id",loadComponent:()=>import("./chunk-VXCDGY23.js").then(t=>t.BugDetail)}];export{o as BUGS_ROUTES};
