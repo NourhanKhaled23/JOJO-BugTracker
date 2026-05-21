@@ -1,25 +1,24 @@
-import { Component, EventEmitter, Output, inject, ChangeDetectionStrategy, signal, HostListener } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, signal, HostListener, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router, NavigationEnd } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { AuthStore } from '../../core/stores/auth.store';
-import { LucideAngularModule, Menu, Bell, Search, User as UserIcon, LogOut, Sun, Moon, Palette, ChevronRight, Check, Trash2, X } from 'lucide-angular';
+import { LucideAngularModule, Menu, Bell, Search, User as UserIcon, LogOut, Sun, Moon, Palette, ChevronRight, Check, Trash2, X, LayoutDashboard, FolderKanban, Bug, Users, Settings, Tag, ShieldAlert } from 'lucide-angular';
 import { ThemeService, Theme } from '../../core/services/theme.service';
 import { NotificationService, AppNotification } from '../../core/services/notification.service';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Role } from '../../core/enums/role';
 import { Logo } from '../../shared/components/logo/logo';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterLink, Logo],
+  imports: [CommonModule, LucideAngularModule, RouterLink, RouterLinkActive, Logo],
   templateUrl: './topbar.html',
   styleUrl: './topbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Topbar {
-  @Output() toggleSidebar = new EventEmitter<void>();
-
   private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   readonly themeService = inject(ThemeService);
@@ -37,6 +36,20 @@ export class Topbar {
   readonly Check = Check;
   readonly Trash = Trash2;
   readonly X = X;
+  readonly ShieldAlert = ShieldAlert;
+
+  readonly navItems = [
+    { label: 'Dashboard', icon: LayoutDashboard, route: '/dashboard', exact: true },
+    { label: 'Projects',  icon: FolderKanban,    route: '/projects',  exact: false },
+    { label: 'Issues',    icon: Bug,             route: '/bugs',      exact: false },
+    { label: 'Labels',    icon: Tag,             route: '/labels',    exact: false },
+    { label: 'Members',   icon: Users,           route: '/members',   exact: false },
+    { label: 'Settings',  icon: Settings,        route: '/settings',  exact: false },
+  ];
+
+  readonly isAdmin = computed(() =>
+    this.authStore.user()?.role === Role.Admin || this.authStore.user()?.role === Role.Owner
+  );
 
   // Signals — required for OnPush to detect changes
   showUserMenu = signal(false);

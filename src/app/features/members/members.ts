@@ -1,6 +1,6 @@
 import { Component, signal, computed, ChangeDetectionStrategy, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Search, Plus, MoreHorizontal, User, Mail, Shield, ShieldAlert, CheckCircle2, X, Trash2, Edit2, Check } from 'lucide-angular';
+import { LucideAngularModule, Search, Plus, MoreHorizontal, User, Mail, Shield, ShieldAlert, CheckCircle2, X, Trash2, Edit2, Check, Bug } from 'lucide-angular';
 import { listAnimation, slideInAnimation } from '../../core/animations/ui.animations';
 import { ToastService } from '../../core/services/toast.service';
 import { RbacService } from '../../core/services/rbac.service';
@@ -11,6 +11,7 @@ import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-di
 
 import { MembersStore } from './store/members.store';
 import { Member } from '../../core/services/members-api.service';
+import { BugsStore } from '../bugs/store/bugs.store';
 
 const ROLES = ['Admin', 'Developer', 'Viewer'];
 
@@ -30,6 +31,7 @@ export class Members {
   private readonly authStore = inject(AuthStore);
   private readonly notifService = inject(NotificationService);
   readonly store = inject(MembersStore);
+  readonly bugStore = inject(BugsStore);
 
   readonly Search = Search;
   readonly Plus = Plus;
@@ -43,6 +45,7 @@ export class Members {
   readonly Trash = Trash2;
   readonly Edit2 = Edit2;
   readonly Check = Check;
+  readonly Bug = Bug;
 
   readonly roles = ROLES;
 
@@ -51,6 +54,11 @@ export class Members {
   editingMemberId = signal<string | null>(null);
   openMenuId = signal<string | null>(null);
   removingMemberId = signal<string | null>(null);
+  showAssignModal = signal<string | null>(null);
+
+  assignableBugs = computed(() =>
+    this.bugStore.bugs().filter(b => b.status !== 'closed')
+  );
 
   removingMemberName = computed(() => {
     const id = this.removingMemberId();
@@ -119,6 +127,27 @@ export class Members {
     this.showInviteModal.set(false);
     this.openMenuId.set(null);
     this.editingMemberId.set(null);
+    this.showAssignModal.set(null);
+  }
+
+  openAssignModal(memberId: string): void {
+    this.showAssignModal.set(memberId);
+    this.openMenuId.set(null);
+  }
+
+  assignToBug(memberId: string, bugId: string): void {
+    const bug = this.bugStore.bugs().find(b => b.id === bugId);
+    if (!bug) return;
+    const member = this.store.members().find(m => m.id === memberId);
+    if (!member) return;
+    this.bugStore.updateBug({ ...bug, assigneeId: memberId, updatedAt: new Date().toISOString() });
+    this.toast.show(`Assigned ${member.name} to "${bug.title}"`, 'success');
+    this.activity.log({
+      type: 'bug_updated', entityId: bugId, entityTitle: bug.title,
+      userId: this.authStore.user()?.id || 'me', userName: this.authStore.user()?.fullName || 'You',
+      description: `Assigned ${member.name} to bug "${bug.title}"`
+    });
+    this.showAssignModal.set(null);
   }
 
   changeRole(memberId: string, role: string): void {

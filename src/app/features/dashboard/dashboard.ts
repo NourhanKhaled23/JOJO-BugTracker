@@ -8,6 +8,7 @@ import { LucideAngularModule, TrendingUp, TrendingDown, Bug as BugIcon, FolderKa
 import { RbacService } from '../../core/services/rbac.service';
 import { UserLookupService } from '../../core/services/user-lookup.service';
 import { ActivityService } from '../../core/services/activity.service';
+import { ToastService } from '../../core/services/toast.service';
 import { ChartData, ChartOptions } from 'chart.js';
 
 @Component({
@@ -25,6 +26,7 @@ export class Dashboard {
   readonly userLookup = inject(UserLookupService);
   readonly activity = inject(ActivityService);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   readonly Bug = BugIcon;
   readonly FolderKanban = FolderKanban;
@@ -61,7 +63,31 @@ export class Dashboard {
   });
 
   generateReport(): void {
-    // Stub: report generation not yet implemented
+    const bugs = this.bugStore.bugs();
+    const projects = this.projectStore.projects();
+    const now = new Date().toISOString().slice(0, 10);
+
+    const rows: string[] = ['"Bug ID","Title","Status","Priority","Project","Assignee","Created","Updated"'];
+    for (const bug of bugs) {
+      const project = projects.find(p => p.id === bug.projectId);
+      rows.push(`"${bug.id}","${bug.title.replace(/"/g, '""')}","${bug.status}","${bug.priority}","${project?.name || 'Unknown'}","${bug.assigneeId || ''}","${bug.createdAt}","${bug.updatedAt}"`);
+    }
+    rows.push('');
+    rows.push(`"Report generated",${now}`);
+    rows.push(`"Total Bugs",${bugs.length}`);
+    rows.push(`"Open Bugs",${bugs.filter(b => b.status === 'open').length}`);
+    rows.push(`"Closed Bugs",${bugs.filter(b => b.status === 'closed').length}`);
+    rows.push(`"Total Projects",${projects.length}`);
+
+    const csv = rows.join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bugtrackr-report-${now}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.toast.show('Report downloaded', 'success');
   }
 
   navigateToBug(bugId: string): void {

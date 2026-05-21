@@ -93,12 +93,19 @@
                 </button>
                 }
                 @if (openMenuId() === member.id) {
-                <div class="absolute right-0 top-full mt-1 w-44 bg-bg-surface border border-border rounded-xl shadow-xl z-30 overflow-hidden">
+                <div class="absolute right-0 top-full mt-1 w-48 bg-bg-surface border border-border rounded-xl shadow-xl z-30 overflow-hidden">
                   @if (rbac.can('member:edit-role')) {
                   <button (click)="startEditRole(member.id)"
                     class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-primary hover:bg-bg-hover transition-colors">
                     <lucide-icon [name]="Edit2" [size]="14"></lucide-icon>
                     Change Role
+                  </button>
+                  }
+                  @if (rbac.can('bug:edit')) {
+                  <button (click)="openAssignModal(member.id)"
+                    class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-primary hover:bg-bg-hover transition-colors">
+                    <lucide-icon [name]="Bug" [size]="14"></lucide-icon>
+                    Assign to Bug
                   </button>
                   }
                   @if (rbac.can('member:remove')) {
@@ -213,6 +220,39 @@
         class="flex-1 py-3 bg-accent text-white rounded-xl font-bold text-sm hover:bg-accent-bright transition-all shadow-lg shadow-accent/20">
         Send Invite
       </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Assign to Bug Modal -->
+@if (showAssignModal(); as memberId) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="showAssignModal.set(null)" tabindex="0" (keydown.enter)="showAssignModal.set(null)"></div>
+  <div class="relative bg-bg-surface border border-border rounded-2xl shadow-2xl w-full max-w-lg p-6 z-10 max-h-[70vh] flex flex-col">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-text-primary">Assign to Bug</h2>
+      <button (click)="showAssignModal.set(null)" class="p-1.5 rounded-lg hover:bg-bg-hover text-text-muted transition-colors">
+        <lucide-icon [name]="X" [size]="18"></lucide-icon>
+      </button>
+    </div>
+    <p class="text-sm text-text-muted mb-4">Select a bug to assign this member to:</p>
+    <div class="flex-1 overflow-y-auto space-y-2">
+      @for (bug of assignableBugs(); track bug.id) {
+        <button (click)="assignToBug(memberId, bug.id)"
+          class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-accent/10 border border-border hover:border-accent/30 transition-all text-left">
+          <div class="w-8 h-8 rounded-lg bg-bg-elevated flex items-center justify-center text-xs font-bold text-text-muted">
+            <lucide-icon [name]="Bug" [size]="14"></lucide-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-bold text-text-primary truncate">{{ bug.title }}</div>
+            <div class="text-[10px] text-text-muted mt-0.5">{{ bug.projectId }} · {{ bug.priority }}</div>
+          </div>
+        </button>
+      }
+      @if (assignableBugs().length === 0) {
+        <div class="py-8 text-center text-text-muted text-sm">No open bugs to assign.</div>
+      }
     </div>
   </div>
 </div>

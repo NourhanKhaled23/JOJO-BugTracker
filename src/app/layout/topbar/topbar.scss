@@ -1,0 +1,60 @@
+.topbar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  transition: all 150ms;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+
+    .topbar-nav-icon {
+      color: var(--accent);
+    }
+  }
+}
+
+.topbar-admin {
+  &:hover {
+    color: var(--error);
+    background: rgb(from var(--error) r g b / 0.1);
+
+    .topbar-nav-icon {
+      color: var(--error);
+    }
+  }
+}
+
+.topbar-nav-icon {
+  flex-shrink: 0;
+  transition: color 200ms;
+}
+
+.topbar-nav-label {
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+:host ::ng-deep .topbar-active {
+  color: var(--accent) !important;
+  background: rgb(from var(--accent) r g b / 0.1) !important;
+
+  .topbar-nav-icon {
+    color: var(--accent) !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .topbar-nav-label {
+    display: none;
+  }
+
+  .topbar-nav-item {
+    padding: 8px;
+    border-radius: 10px;
+  }
+}
