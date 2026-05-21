@@ -19,15 +19,19 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  const token = sessionStorage.getItem('token');
+  try {
+    const token = sessionStorage.getItem('token');
 
-  if (token && !isTokenExpired(token)) {
-    return true;
-  }
+    if (token && !isTokenExpired(token)) {
+      return true;
+    }
 
-  if (token && isTokenExpired(token)) {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('bugtrackr_user');
+    if (token && isTokenExpired(token)) {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('bugtrackr_user');
+    }
+  } catch {
+    // Storage unavailable
   }
 
   router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });

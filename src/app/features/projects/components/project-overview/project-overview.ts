@@ -53,7 +53,7 @@ import { Bug as BugModel } from '../../../../core/models/bug.model';
             </div>
             <span class="px-2 py-1 rounded-full text-[10px] font-black bg-accent/10 text-accent uppercase tracking-wider">Team</span>
           </div>
-          <div class="text-4xl font-display font-black text-text-primary tracking-tighter">{{ project().memberIds.length }}</div>
+          <div class="text-4xl font-display font-black text-text-primary tracking-tighter">{{ project()?.memberIds?.length ?? 0 }}</div>
           <div class="text-sm font-bold text-text-muted mt-1">Members</div>
         </div>
       </div>
@@ -63,7 +63,7 @@ import { Bug as BugModel } from '../../../../core/models/bug.model';
           <section class="bg-bg-surface border border-border rounded-2xl p-6">
             <h2 class="text-lg font-bold text-text-primary mb-4">Project Description</h2>
             <p class="text-text-secondary leading-relaxed">
-              {{ project().description }}
+              {{ project()?.description }}
             </p>
           </section>
 
@@ -125,7 +125,7 @@ export class ProjectOverview {
 
   readonly navigateSettings = output<void>();
 
-  readonly project = computed(() => this.store.selectedProject()!);
+  readonly project = computed(() => this.store.selectedProject() ?? null);
 
   readonly projectBugs = computed(() => {
     const project = this.store.selectedProject();

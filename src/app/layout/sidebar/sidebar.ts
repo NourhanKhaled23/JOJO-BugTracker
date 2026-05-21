@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule, LayoutDashboard, FolderKanban, Bug, Users, Settings, ChevronRight, Tag, ShieldAlert } from 'lucide-angular';
 import { listAnimation } from '../../core/animations/ui.animations';
-import { AuthStore } from '../../features/auth/store/auth.store';
+import { AuthStore } from '../../core/stores/auth.store';
 import { ProjectsStore } from '../../features/projects/store/projects.store';
 import { Role } from '../../core/enums/role';
 

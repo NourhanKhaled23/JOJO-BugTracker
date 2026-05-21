@@ -59,8 +59,7 @@ export class Dashboard {
   });
 
   generateReport(): void {
-    // Placeholder for report generation
-    console.log('Report generation requested');
+    // Stub: report generation not yet implemented
   }
 
   navigateToBug(bugId: string): void {

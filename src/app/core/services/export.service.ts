@@ -45,17 +45,19 @@ export class ExportService {
     let bugs = 0, projects = 0;
 
     if (Array.isArray(data['bugs'])) {
-      const validBugs = (data['bugs'] as Record<string, unknown>[]).filter((b) =>
+      const rawBugs = data['bugs'] as Record<string, unknown>[];
+      const validBugs = rawBugs.filter((b) =>
         typeof b['id'] === 'string' && typeof b['title'] === 'string'
       );
-      this.bugsStore.setBugs(validBugs as unknown as Bug[]);
+      this.bugsStore.setBugs(validBugs as Partial<Bug>[] as Bug[]);
       bugs = validBugs.length;
     }
     if (Array.isArray(data['projects'])) {
-      const validProjects = (data['projects'] as Record<string, unknown>[]).filter((p) =>
+      const rawProjects = data['projects'] as Record<string, unknown>[];
+      const validProjects = rawProjects.filter((p) =>
         typeof p['id'] === 'string' && typeof p['name'] === 'string'
       );
-      this.projectsStore.setProjects(validProjects as unknown as Project[]);
+      this.projectsStore.setProjects(validProjects as Partial<Project>[] as Project[]);
       projects = validProjects.length;
     }
     return { bugs, projects };

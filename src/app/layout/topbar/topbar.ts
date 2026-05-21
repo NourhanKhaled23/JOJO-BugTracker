@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
-import { AuthStore } from '../../features/auth/store/auth.store';
+import { AuthStore } from '../../core/stores/auth.store';
 import { LucideAngularModule, Menu, Bell, Search, User as UserIcon, LogOut, Sun, Moon, Palette, ChevronRight, Check, Trash2, X } from 'lucide-angular';
 import { ThemeService, Theme } from '../../core/services/theme.service';
 import { NotificationService, AppNotification } from '../../core/services/notification.service';

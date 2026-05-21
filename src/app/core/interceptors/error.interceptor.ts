@@ -24,8 +24,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           break;
         case 401:
           message = 'Session expired. Please login again.';
-          sessionStorage.removeItem('token');
-          sessionStorage.removeItem('bugtrackr_user');
+          try {
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('bugtrackr_user');
+          } catch {
+            // Storage unavailable
+          }
           router.navigate(['/auth/login']);
           break;
         case 403:

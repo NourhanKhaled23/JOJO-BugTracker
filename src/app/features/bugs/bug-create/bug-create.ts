@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { ToastService } from '../../../core/services/toast.service';
-import { AuthStore } from '../../auth/store/auth.store';
+import { AuthStore } from '../../../core/stores/auth.store';
 
 import { Drawer } from '../../../shared/components/drawer/drawer';
 import { BugsStore } from '../store/bugs.store';

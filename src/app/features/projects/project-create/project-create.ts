@@ -7,7 +7,7 @@ import { Modal } from '../../../shared/components/modal/modal';
 import { ProjectsStore } from '../store/projects.store';
 import { ProjectType } from '../../../core/models/project.model';
 import { ActivityService } from '../../../core/services/activity.service';
-import { AuthStore } from '../../auth/store/auth.store';
+import { AuthStore } from '../../../core/stores/auth.store';
 
 @Component({
   selector: 'app-project-create',

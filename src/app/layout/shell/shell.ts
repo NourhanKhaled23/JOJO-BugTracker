@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { Sidebar } from '../sidebar/sidebar';
 import { Topbar } from '../topbar/topbar';
-import { AuthStore } from '../../features/auth/store/auth.store';
+import { AuthStore } from '../../core/stores/auth.store';
 import { ProjectsStore } from '../../features/projects/store/projects.store';
 import { LucideAngularModule, LayoutDashboard, FolderKanban, Bug, Settings, CheckCircle2, AlertCircle, Info, AlertTriangle, Users } from 'lucide-angular';
 import { PerformanceOverlay } from '../../shared/components/performance-overlay/performance-overlay';

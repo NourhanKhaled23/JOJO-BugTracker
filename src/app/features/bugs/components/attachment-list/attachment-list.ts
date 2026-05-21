@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@a
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Paperclip, Download, Trash2 } from 'lucide-angular';
 import { BugsStore } from '../../store/bugs.store';
-import { AuthStore } from '../../../auth/store/auth.store';
+import { AuthStore } from '../../../../core/stores/auth.store';
 import { ToastService } from '../../../../core/services/toast.service';
 import { RbacService } from '../../../../core/services/rbac.service';
 import { ActivityService } from '../../../../core/services/activity.service';

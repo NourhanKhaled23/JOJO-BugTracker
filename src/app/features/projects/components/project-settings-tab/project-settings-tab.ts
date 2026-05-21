@@ -4,7 +4,7 @@ import { ProjectsStore } from '../../store/projects.store';
 import { RbacService } from '../../../../core/services/rbac.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ActivityService } from '../../../../core/services/activity.service';
-import { AuthStore } from '../../../auth/store/auth.store';
+import { AuthStore } from '../../../../core/stores/auth.store';
 import { Project } from '../../../../core/models/project.model';
 
 @Component({
@@ -53,7 +53,7 @@ import { Project } from '../../../../core/models/project.model';
           </div>
 
           <div class="pt-6 border-t border-border flex items-center justify-between">
-            <div class="text-xs text-text-muted font-medium">Last updated {{ project.lastActivity | date:'shortTime' }} today</div>
+            <div class="text-xs text-text-muted font-medium">Last updated {{ project?.lastActivity | date:'shortTime' }} today</div>
             <div class="flex gap-3">
               <button (click)="discardChanges()" class="px-6 py-2.5 rounded-xl border border-border font-bold text-sm hover:bg-bg-hover transition-colors">Discard</button>
               <button (click)="saveProjectSettings()" class="px-6 py-2.5 bg-accent text-white rounded-xl font-bold text-sm shadow-lg shadow-accent/20 hover:bg-accent-bright transition-all">Save Changes</button>
@@ -68,7 +68,7 @@ import { Project } from '../../../../core/models/project.model';
           <p class="text-xs text-text-muted mt-1">This will hide the project and all its issues from active views.</p>
         </div>
         <button (click)="toggleArchive()" class="px-6 py-2.5 border border-error/20 text-error hover:bg-error hover:text-white rounded-xl font-bold text-sm transition-all">
-          {{ project.isArchived ? 'Restore' : 'Archive' }}
+            {{ project?.isArchived ? 'Restore' : 'Archive' }}
         </button>
       </div>
 
@@ -99,8 +99,8 @@ export class ProjectSettingsTab {
   editType = signal<string>('web');
   editColor = signal('');
 
-  get project(): Project {
-    return this.store.selectedProject()!;
+  get project(): Project | null {
+    return this.store.selectedProject() ?? null;
   }
 
   constructor() {

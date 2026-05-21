@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RbacService } from '../../../core/services/rbac.service';
 import { ActivityService } from '../../../core/services/activity.service';
-import { AuthStore } from '../../auth/store/auth.store';
+import { AuthStore } from '../../../core/stores/auth.store';
 import { BugStatus, BugPriority } from '../../../core/models/bug.model';
 import { BugEdit } from '../bug-edit/bug-edit';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';

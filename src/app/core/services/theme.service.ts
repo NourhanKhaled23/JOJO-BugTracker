@@ -10,7 +10,12 @@ export class ThemeService {
 
   constructor() {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('theme') as Theme;
+      let saved: Theme;
+      try {
+        saved = (localStorage.getItem('theme') as Theme) || 'dark';
+      } catch {
+        saved = 'dark';
+      }
       if (saved && ['light', 'dark', 'rose', 'ocean', 'forest'].includes(saved)) {
         this.setTheme(saved);
       } else {
@@ -24,7 +29,11 @@ export class ThemeService {
   setTheme(theme: Theme): void {
     this.currentTheme.set(theme);
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      localStorage.setItem('theme', theme);
+      try {
+        localStorage.setItem('theme', theme);
+      } catch {
+        // Storage unavailable
+      }
     }
     this.applyTheme(theme);
   }

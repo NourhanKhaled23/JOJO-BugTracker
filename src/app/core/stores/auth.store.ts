@@ -25,21 +25,29 @@ export const AuthStore = signalStore(
   withState(initialState),
   withMethods((store, router = inject(Router)) => ({
     initialize(): void {
-      const token = sessionStorage.getItem('token');
-      const userRaw = sessionStorage.getItem('bugtrackr_user');
-      if (token) {
-        let user: User | null;
-        try {
-          user = userRaw ? JSON.parse(userRaw) : null;
-        } catch {
-          user = null;
+      try {
+        const token = sessionStorage.getItem('token');
+        const userRaw = sessionStorage.getItem('bugtrackr_user');
+        if (token) {
+          let user: User | null;
+          try {
+            user = userRaw ? JSON.parse(userRaw) : null;
+          } catch {
+            user = null;
+          }
+          patchState(store, { token, isAuthenticated: true, user });
         }
-        patchState(store, { token, isAuthenticated: true, user });
+      } catch {
+        // Storage unavailable
       }
     },
     login(token: string, user: User): void {
-      sessionStorage.setItem('token', token);
-      sessionStorage.setItem('bugtrackr_user', JSON.stringify(user));
+      try {
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('bugtrackr_user', JSON.stringify(user));
+      } catch {
+        // Storage unavailable
+      }
       patchState(store, { 
         token, 
         user, 
@@ -49,8 +57,12 @@ export const AuthStore = signalStore(
       });
     },
     logout(): void {
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('bugtrackr_user');
+      try {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('bugtrackr_user');
+      } catch {
+        // Storage unavailable
+      }
       patchState(store, { 
         token: null, 
         user: null, 
