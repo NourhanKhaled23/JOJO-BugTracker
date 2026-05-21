@@ -6,11 +6,12 @@ import { listAnimation } from '../../core/animations/ui.animations';
 import { AuthStore } from '../../core/stores/auth.store';
 import { ProjectsStore } from '../../features/projects/store/projects.store';
 import { Role } from '../../core/enums/role';
+import { Logo } from '../../shared/components/logo/logo';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, LucideAngularModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive, LucideAngularModule, Logo],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
   animations: [listAnimation],

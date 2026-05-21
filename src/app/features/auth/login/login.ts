@@ -5,12 +5,13 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthStore } from '../../../core/stores/auth.store';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LucideAngularModule, Eye, EyeOff, Loader2, Info, ArrowRight, Bug, AlertCircle } from 'lucide-angular';
+import { Logo } from '../../../shared/components/logo/logo';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule, Logo],
   templateUrl: './login.html',
   styleUrl: './login.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

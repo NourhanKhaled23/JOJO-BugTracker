@@ -7,11 +7,12 @@ import { ThemeService, Theme } from '../../core/services/theme.service';
 import { NotificationService, AppNotification } from '../../core/services/notification.service';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Logo } from '../../shared/components/logo/logo';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterLink],
+  imports: [CommonModule, LucideAngularModule, RouterLink, Logo],
   templateUrl: './topbar.html',
   styleUrl: './topbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
