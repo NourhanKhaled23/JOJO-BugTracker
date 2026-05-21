@@ -26,7 +26,7 @@ import { BugMetadata } from '../components/bug-metadata/bug-metadata';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BugDetail implements OnInit {
-  private readonly router = inject(Router);
+  readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   readonly store = inject(BugsStore);
@@ -64,18 +64,15 @@ export class BugDetail implements OnInit {
       });
   }
 
+  bugNotFound = signal(false);
+
   loadBug(id: string): void {
     const bug = this.store.bugs().find(b => b.id === id);
     if (bug) {
       this.store.setSelectedBug(bug);
+      this.bugNotFound.set(false);
     } else {
-      this.store.setSelectedBug({
-        id, projectId: 'p1', title: 'Issue ' + id,
-        description: 'Auto-recovered issue data.',
-        status: 'open', priority: 'high', assigneeId: 'u1', reporterId: 'u2',
-        labelIds: [], attachmentIds: [],
-        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), dueDate: null
-      });
+      this.bugNotFound.set(true);
     }
   }
 
