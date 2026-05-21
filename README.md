@@ -54,18 +54,7 @@ ng build --configuration production
 
 Output is written to `dist/bugtrackr/browser/`.
 
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── core/              # Services, guards, auth store, models
-│   ├── shared/            # Reusable components (modals, badges, etc.)
-│   ├── features/          # Feature modules (auth, projects, bugs, dashboard, members, settings)
-│   └── layout/            # App shell, sidebar, topbar
-├── environments/          # Environment config (EmailJS keys)
-└── styles/                # Global styles and theme variables
-```
+<img width="870" height="840" alt="image" src="https://github.com/user-attachments/assets/7725bdfb-1c05-4e0e-af23-6ba7f9dd8de2" />
 
 ## Deployment
 
