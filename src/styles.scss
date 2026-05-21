@@ -212,17 +212,6 @@ h1, h2, h3, h4, h5, h6 {
   animation: shimmer 2s infinite;
 }
 
-/* Sidebar collapsed — clip overflow so text doesn't bleed */
-app-sidebar aside {
-  overflow: hidden;
-}
-
-app-sidebar aside span,
-app-sidebar aside .flex-col {
-  overflow: hidden;
-  white-space: nowrap;
-}
-
 @keyframes shimmer {
   100% { transform: translateX(100%); }
 }
