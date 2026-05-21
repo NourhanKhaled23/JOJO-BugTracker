@@ -69,7 +69,7 @@
               @if (notifService.unreadCount() > 0) {
                 <button (click)="notifService.markAllRead()" class="text-xs text-accent hover:text-accent-bright transition-colors font-medium">Mark all read</button>
               }
-              <button (click)="showNotifPanel.set(false)" class="p-1 rounded hover:bg-bg-hover text-text-muted transition-colors">
+              <button (click)="showNotifPanel.set(false)" (keydown.enter)="showNotifPanel.set(false)" class="p-1 rounded hover:bg-bg-hover text-text-muted transition-colors">
                 <lucide-icon [name]="X" [size]="14"></lucide-icon>
               </button>
             </div>
@@ -92,6 +92,8 @@
                   <p class="text-[10px] text-text-muted mt-1">{{ notif.timestamp | date:'MMM d, h:mm a' }}</p>
                 </div>
                 <button (click)="$event.stopPropagation(); notifService.remove(notif.id)"
+                  (keydown.enter)="$event.stopPropagation(); notifService.remove(notif.id)"
+                  (keydown.space)="$event.preventDefault(); $event.stopPropagation(); notifService.remove(notif.id)"
                   class="p-1 rounded hover:bg-bg-hover text-text-muted hover:text-error transition-colors flex-shrink-0">
                   <lucide-icon [name]="X" [size]="12"></lucide-icon>
                 </button>

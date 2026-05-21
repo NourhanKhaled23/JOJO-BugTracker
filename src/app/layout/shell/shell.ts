@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { Sidebar } from '../sidebar/sidebar';
@@ -28,7 +28,7 @@ export class Shell {
   readonly toastService = inject(ToastService);
 
   
-  isSidebarCollapsed = false;
+  isSidebarCollapsed = signal(false);
 
   
   readonly LayoutDashboard = LayoutDashboard;
@@ -42,6 +42,6 @@ export class Shell {
   readonly Users = Users;
 
   toggleSidebar(): void {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    this.isSidebarCollapsed.update(v => !v);
   }
 }

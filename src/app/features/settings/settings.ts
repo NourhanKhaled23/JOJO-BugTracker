@@ -120,7 +120,8 @@ export class Settings {
   }
 
   importData(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -132,6 +133,7 @@ export class Settings {
       }
     };
     reader.readAsText(file);
+    input.value = '';
   }
 
   setTheme(theme: Theme): void {
