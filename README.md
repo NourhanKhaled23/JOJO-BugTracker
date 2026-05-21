@@ -1,50 +1,76 @@
-# 🐛 BugTrackr — Professional Bug Tracking System
+# BugTrackr — Bug Tracking & Project Management Dashboard
 
-BugTrackr is a state-of-the-art bug tracking and project management system built with **Angular 21**, designed for high-performance teams. It features a modern "SaaS" aesthetic with 5 dynamic themes, real-time data visualization, and an intuitive Kanban-based workflow.
+BugTrackr is a single-page application for software teams to track bugs, manage projects, and collaborate. Built with **Angular 21**, it runs entirely in the browser with localStorage as a mock backend.
 
-## ✨ Key Features
+## Live Demo
 
-- **📊 Interactive Dashboard**: Visualize project health with real-time Chart.js integration.
-- **📋 Issue Management**: track bugs with high-density tables or visual Kanban boards.
-- **📁 Project Hub**: Manage multiple development projects with custom branding (colors/icons).
-- **🎨 5 Premium Themes**: Switch instantly between Light, Dark, Ocean, Forest, and Rose modes.
-- **⚡ Performance First**: Built using Angular Signals and OnPush change detection for lightning-fast UI.
-- **🛡️ Secure Auth**: JWT-based authentication with protected routes and animated forms.
+**https://bugtrackr-omega.vercel.app**
 
-## 🛠️ Technology Stack
+Demo credentials:
+- **Email:** MohamedTarek@test.com
+- **Password:** password
 
-- **Framework**: [Angular 21](https://angular.io/) (Standalone Components, Signals)
-- **State Management**: [@ngrx/signals](https://ngrx.io/guide/signals)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [SCSS Themes](https://sass-lang.com/)
-- **Icons**: [Lucide Angular](https://lucide.dev/)
-- **Charts**: [Chart.js](https://www.chartjs.org/) + [ng2-charts](https://valor-software.com/ng2-charts/)
-- **Animations**: [Angular Animations](https://angular.io/guide/animations) + [GSAP](https://greensock.com/)
+## Features
 
-## 🚀 Getting Started
+- **Dashboard**: Overview of open bugs, active projects, and team activity with Chart.js visualizations
+- **Project Management**: Create, edit, and view projects with linked bugs
+- **Bug Tracking**: Full CRUD for bugs with list, detail, and Kanban board views
+- **Team Management**: Invite members via EmailJS, assign roles, and manage the team
+- **Role-Based Access**: Admin, Team Lead, Developer, and Viewer roles with conditional navigation
+- **Dark/Light Theme**: Persisted theme preference
+- **Responsive**: Desktop-first with tablet-friendly layout
+
+## Tech Stack
+
+- **Framework**: Angular 21 (Standalone Components, Signals)
+- **State Management**: @ngrx/signals
+- **Styling**: Tailwind CSS + CSS custom properties
+- **Icons**: Lucide Angular
+- **Charts**: Chart.js + ng2-charts
+- **Email**: EmailJS (transactional invites)
+
+## Getting Started
 
 ### Prerequisites
 - Node.js v18+
 - npm v9+
 
 ### Installation
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-4. Open [http://localhost:4200](http://localhost:4200)
 
-## 📁 Project Structure
+```bash
+git clone https://github.com/NourhanKhaled23/JOJO-BugTracker.git
+cd JOJO-BugTracker
+npm install
+ng serve
+```
 
-- `src/app/core`: Singleton services, guards, interceptors, and models.
-- `src/app/shared`: Reusable components (Modals, Drawers, Badges).
-- `src/app/features`: Feature-based modules (Auth, Projects, Bugs, Dashboard).
-- `src/app/layout`: Application shell, Sidebar, and Topbar.
-- `src/styles/themes`: Custom SCSS theme definitions.
+Open [http://localhost:4200](http://localhost:4200)
 
----
-Built with ❤️ by the BugTrackr Team.
+### Build for Production
+
+```bash
+ng build --configuration production
+```
+
+Output is written to `dist/bugtrackr/browser/`.
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── core/              # Services, guards, auth store, models
+│   ├── shared/            # Reusable components (modals, badges, etc.)
+│   ├── features/          # Feature modules (auth, projects, bugs, dashboard, members, settings)
+│   └── layout/            # App shell, sidebar, topbar
+├── environments/          # Environment config (EmailJS keys)
+└── styles/                # Global styles and theme variables
+```
+
+## Deployment
+
+The app is deployed on Vercel via GitHub integration. Pushes to the `main` branch trigger automatic builds.
+
+## License
+
+MIT
