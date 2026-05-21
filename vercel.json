@@ -1,9 +1,5 @@
 {
-  "version": 2,
-  "builds": [{ "src": "dist/bugtrackr/browser/**", "use": "@vercel/static" }],
-  "routes": [
-    { "src": "/(.*)", "dest": "/dist/bugtrackr/browser/$1" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/dist/bugtrackr/browser/index.html" }
-  ]
+  "framework": "angular",
+  "outputDirectory": "dist/bugtrackr/browser",
+  "buildCommand": "npx ng build --configuration production"
 }
