@@ -26,7 +26,8 @@ import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/conf
       <div class="flex-1" [formGroup]="commentForm">
         <textarea formControlName="text" placeholder="Add a comment..." rows="3"
           class="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors resize-none"
-          [class.border-error]="commentForm.get('text')?.touched && commentForm.get('text')?.invalid"></textarea>
+          [class.border-error]="commentForm.get('text')?.touched && commentForm.get('text')?.invalid"
+          (keydown.enter)="$any($event).ctrlKey && addComment()"></textarea>
         <div class="flex justify-end mt-3">
           <button (click)="addComment()" [disabled]="commentForm.invalid"
             class="px-5 py-2 bg-accent text-white rounded-xl text-sm font-bold hover:bg-accent-bright transition-all disabled:opacity-50 disabled:cursor-not-allowed">
@@ -81,7 +82,8 @@ import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/conf
         @if (editingCommentId() === comment.id) {
         <div>
           <textarea [(ngModel)]="editingCommentText" rows="3"
-            class="w-full bg-bg-elevated border border-accent rounded-xl px-4 py-3 text-sm focus:outline-none resize-none"></textarea>
+            class="w-full bg-bg-elevated border border-accent rounded-xl px-4 py-3 text-sm focus:outline-none resize-none"
+            (keydown.enter)="$any($event).ctrlKey && saveEditComment()"></textarea>
           <div class="flex gap-2 mt-2">
             <button (click)="saveEditComment()" class="px-4 py-1.5 bg-accent text-white rounded-lg text-xs font-bold hover:bg-accent-bright transition-all">Save</button>
             <button (click)="cancelEditComment()" class="px-4 py-1.5 bg-bg-elevated text-text-muted rounded-lg text-xs font-bold hover:bg-bg-hover transition-all">Cancel</button>
