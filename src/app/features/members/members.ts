@@ -1,6 +1,5 @@
-import { Component, signal, computed, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, Plus, MoreHorizontal, User, Mail, Shield, ShieldAlert, CheckCircle2, X, Trash2, Edit2, Check } from 'lucide-angular';
 import { listAnimation, slideInAnimation } from '../../core/animations/ui.animations';
 import { ToastService } from '../../core/services/toast.service';
@@ -18,7 +17,7 @@ const ROLES = ['Admin', 'Developer', 'Viewer'];
 @Component({
   selector: 'app-members',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, ConfirmDialog],
+  imports: [CommonModule, LucideAngularModule, ConfirmDialog],
   templateUrl: './members.html',
   styleUrl: './members.scss',
   animations: [listAnimation, slideInAnimation],
@@ -113,6 +112,13 @@ export class Members {
     });
     this.notifService.push({ title: 'Member Invited', message: `${name} has been invited as ${this.inviteRole()}`, type: 'success' });
     this.showInviteModal.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  closeModals(): void {
+    this.showInviteModal.set(false);
+    this.openMenuId.set(null);
+    this.editingMemberId.set(null);
   }
 
   changeRole(memberId: string, role: string): void {

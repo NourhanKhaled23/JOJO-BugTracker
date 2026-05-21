@@ -1,7 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { BugsStore } from '../store/bugs.store';
 import { LucideAngularModule, LucideIconData, Plus, Search, Filter, MoreVertical, Bug, Clock, CheckCircle2, AlertCircle, ShieldAlert, LayoutGrid, List, X, Tag, Trash2, ChevronDown } from 'lucide-angular';
 import { ProjectsStore } from '../../projects/store/projects.store';
@@ -17,7 +16,7 @@ import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm
 @Component({
   selector: 'app-bug-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, LucideAngularModule, BugCreate, BugKanban, FormsModule, ConfirmDialog],
+  imports: [CommonModule, RouterLink, LucideAngularModule, BugCreate, BugKanban, ConfirmDialog],
   templateUrl: './bug-list.html',
   styleUrl: './bug-list.scss',
   animations: [listAnimation, slideInAnimation, fadeAnimation],

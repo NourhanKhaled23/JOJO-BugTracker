@@ -1,6 +1,5 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Tag, Plus, Trash2, Edit2, Check, X } from 'lucide-angular';
 import { BugsStore } from '../bugs/store/bugs.store';
 import { ToastService } from '../../core/services/toast.service';
@@ -14,7 +13,7 @@ const PRESET_COLORS = ['#7C3AED','#10B981','#F59E0B','#EF4444','#EC4899','#6366F
 @Component({
   selector: 'app-labels',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule, ConfirmDialog],
+  imports: [CommonModule, LucideAngularModule, ConfirmDialog],
   templateUrl: './labels.html',
   animations: [listAnimation, slideInAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush

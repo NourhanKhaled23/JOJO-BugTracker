@@ -1,6 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, LucideIconData, User, Settings as SettingsIcon, Bell, Shield, Paintbrush, Moon, Sun, Camera, Download, Upload, Trash2, Check, X } from 'lucide-angular';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { fadeAnimation, slideInAnimation } from '../../core/animations/ui.animations';
@@ -14,7 +14,7 @@ import { RbacService } from '../../core/services/rbac.service';
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule, ReactiveFormsModule, ConfirmDialog],
+  imports: [CommonModule, LucideAngularModule, ReactiveFormsModule, ConfirmDialog],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
   animations: [fadeAnimation, slideInAnimation],
