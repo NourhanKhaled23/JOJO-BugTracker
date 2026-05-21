@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, EventEmitter, Output, inject, ChangeDetectionStrategy, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { AuthStore } from '../../core/stores/auth.store';
@@ -64,6 +64,16 @@ export class Topbar {
         const match = Object.keys(this.routeLabels).find(k => url.startsWith(k));
         this.currentPage.set(match ? this.routeLabels[match] : 'BugTrackr');
       });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.menu-container')) {
+      this.showUserMenu.set(false);
+      this.showThemeMenu.set(false);
+      this.showNotifPanel.set(false);
+    }
   }
 
   // Correct theme swatch colors — match actual theme backgrounds

@@ -24,7 +24,7 @@
     </button>
 
     <!-- Theme Switcher -->
-    <div class="relative">
+    <div class="relative menu-container">
       <button (click)="toggleThemeMenu()"
         class="p-2.5 rounded-xl text-text-muted hover:bg-bg-hover hover:text-text-primary transition-all hover:scale-110 active:scale-95"
         [class.text-accent]="showThemeMenu()">
@@ -50,7 +50,7 @@
     </div>
 
     <!-- Notifications -->
-    <div class="relative">
+    <div class="relative menu-container">
       <button (click)="toggleNotifPanel()"
         class="p-2.5 rounded-xl text-text-muted hover:bg-bg-hover hover:text-text-primary transition-all relative hover:scale-110 active:scale-95"
         [class.text-accent]="showNotifPanel()">
@@ -110,7 +110,7 @@
     <div class="w-px h-8 bg-border mx-1 hidden sm:block"></div>
 
     <!-- User Menu -->
-    <div class="relative">
+    <div class="relative menu-container">
       <button (click)="toggleUserMenu()"
         class="flex items-center gap-3 p-1.5 pl-1.5 pr-4 rounded-2xl hover:bg-bg-hover transition-all border border-transparent group"
         [class.bg-bg-hover]="showUserMenu()">
@@ -119,7 +119,7 @@
         </div>
         <div class="hidden md:block text-left">
           <div class="text-sm font-black text-text-primary leading-none tracking-tight">{{ user?.fullName }}</div>
-          <div class="text-[10px] text-text-muted font-bold mt-1 uppercase tracking-wider">{{ user?.email }}</div>
+          <div class="text-[10px] text-text-muted font-bold mt-1 uppercase tracking-wider">{{ user?.email || user?.role || 'guest' }}</div>
         </div>
       </button>
       @if (showUserMenu()) {
