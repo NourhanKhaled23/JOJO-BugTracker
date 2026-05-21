@@ -6,7 +6,7 @@ import { listAnimation, slideInAnimation } from '../../core/animations/ui.animat
 import { ToastService } from '../../core/services/toast.service';
 import { RbacService } from '../../core/services/rbac.service';
 import { ActivityService } from '../../core/services/activity.service';
-import { AuthStore } from '../auth/store/auth.store';
+import { AuthStore } from '../../core/stores/auth.store';
 import { NotificationService } from '../../core/services/notification.service';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 

@@ -2,7 +2,7 @@ import { Component, inject, ChangeDetectionStrategy, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { AuthStore } from '../store/auth.store';
+import { AuthStore } from '../../../core/stores/auth.store';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LucideAngularModule, Eye, EyeOff, Loader2, Info, ArrowRight, Bug, AlertCircle } from 'lucide-angular';
 
@@ -69,7 +69,9 @@ export class Login {
       const params = new URLSearchParams(window.location.search);
       const returnUrl = params.get('returnUrl');
       if (returnUrl) {
-        setTimeout(() => this.router.navigateByUrl(returnUrl), 0);
+        this.router.navigateByUrl(returnUrl);
+      } else {
+        this.router.navigate(['/dashboard']);
       }
     } else {
       this.authStore.setLoading(false);

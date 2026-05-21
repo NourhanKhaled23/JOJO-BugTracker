@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BugsStore } from '../../features/bugs/store/bugs.store';
-import { ProjectsStore } from '../../features/projects/store/projects.store';
+import { ProjectsStore } from '../stores/projects.store';
 import { Bug } from '../models/bug.model';
 import { Project } from '../models/project.model';
 

@@ -5,7 +5,7 @@ import { LucideAngularModule, LucideIconData, User, Settings as SettingsIcon, Be
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { fadeAnimation, slideInAnimation } from '../../core/animations/ui.animations';
 import { ThemeService, Theme } from '../../core/services/theme.service';
-import { AuthStore } from '../auth/store/auth.store';
+import { AuthStore } from '../../core/stores/auth.store';
 import { ToastService } from '../../core/services/toast.service';
 import { ExportService } from '../../core/services/export.service';
 import { NotificationService } from '../../core/services/notification.service';

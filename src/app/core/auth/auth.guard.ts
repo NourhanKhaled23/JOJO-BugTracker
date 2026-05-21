@@ -2,11 +2,13 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 
 function isTokenExpired(token: string): boolean {
+  const parts = token.split('.');
+  if (parts.length !== 3) { return false; }
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(parts[1]));
     return payload.exp ? payload.exp * 1000 < Date.now() : false;
   } catch {
-    return true;
+    return false;
   }
 }
 

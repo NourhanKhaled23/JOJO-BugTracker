@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { AuthStore } from '../../features/auth/store/auth.store';
+import { AuthStore } from '../stores/auth.store';
 import { User } from '../models/user.model';
 import { Role } from '../enums/role';
 

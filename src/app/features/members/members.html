@@ -26,6 +26,14 @@
   <main class="flex-1 overflow-y-auto p-6 lg:p-8">
     <div class="max-w-7xl mx-auto">
 
+      <!-- Loading State -->
+      @if (store.isLoading()) {
+      <div class="text-center py-12">
+        <div class="inline-block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-sm text-text-muted mt-2">Loading members...</p>
+      </div>
+      }
+
       <!-- Stats Row -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8" [@slideInAnimation]>
         <div class="glass border border-border rounded-2xl p-6 flex items-center gap-4">

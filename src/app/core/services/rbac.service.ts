@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { AuthStore } from '../../features/auth/store/auth.store';
+import { AuthStore } from '../stores/auth.store';
 
 export type Permission =
   | 'bug:create' | 'bug:edit' | 'bug:delete' | 'bug:view'

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, Output, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, AlertTriangle, Trash2, Archive } from 'lucide-angular';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -81,6 +81,13 @@ export class ConfirmDialog {
   readonly Trash = Trash2;
   readonly AlertTriangle = AlertTriangle;
   readonly Archive = Archive;
+
+  @HostListener('keydown.escape')
+  onEscape(): void {
+    if (this.isOpen) {
+      this.cancelled.emit();
+    }
+  }
 
   onConfirm(): void { this.confirmed.emit(); }
   onCancel(): void { this.cancelled.emit(); }

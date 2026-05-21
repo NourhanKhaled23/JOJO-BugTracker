@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AuthStore } from './auth.store';
+import { AuthStore } from '../../../core/stores/auth.store';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/enums/role';
 

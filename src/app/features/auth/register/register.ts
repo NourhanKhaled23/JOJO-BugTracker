@@ -2,7 +2,7 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { AuthStore } from '../store/auth.store';
+import { AuthStore } from '../../../core/stores/auth.store';
 import { LucideAngularModule, Eye, EyeOff, Loader2, Upload, Check, ChevronRight, ChevronLeft, Bug } from 'lucide-angular';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/enums/role';
