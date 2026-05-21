@@ -1,0 +1,108 @@
+<app-drawer [isOpen]="isOpen" title="Report New Bug" (closed)="onClose()">
+  <form [formGroup]="bugForm" (ngSubmit)="onSubmit()" class="space-y-5">
+
+    <!-- Title -->
+    <div>
+      <label for="bug-title" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Issue Title *</label>
+      <input id="bug-title" type="text" formControlName="title" placeholder="Short, descriptive title"
+        class="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl focus:outline-none focus:border-accent transition-colors text-sm"
+        [class.border-error]="bugForm.get('title')?.invalid && bugForm.get('title')?.touched">
+      @if (bugForm.get('title')?.invalid && bugForm.get('title')?.touched) {
+        <p class="text-xs text-error mt-1">Title must be at least 5 characters</p>
+      }
+    </div>
+
+    <!-- Project -->
+    <div>
+      <label for="bug-project" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Project *</label>
+      <select id="bug-project" formControlName="projectId"
+        class="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl focus:outline-none focus:border-accent transition-colors text-sm appearance-none cursor-pointer"
+        [class.border-error]="bugForm.get('projectId')?.invalid && bugForm.get('projectId')?.touched">
+        <option value="" disabled>Select a project</option>
+        @for (project of projectStore.projects(); track project.id) {
+          <option [value]="project.id">{{ project.name }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Priority & Status -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="bug-priority" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Priority</label>
+        <select id="bug-priority" formControlName="priority"
+          class="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl focus:outline-none focus:border-accent transition-colors text-sm appearance-none cursor-pointer capitalize">
+          @for (p of priorities; track p) {
+            <option [value]="p">{{ p }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label for="bug-status" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Status</label>
+        <select id="bug-status" formControlName="status"
+          class="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl focus:outline-none focus:border-accent transition-colors text-sm appearance-none cursor-pointer capitalize">
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ s.replace('-', ' ') }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Due Date -->
+    <div>
+      <label for="bug-due-date" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Due Date (optional)</label>
+      <input id="bug-due-date" type="date" formControlName="dueDate"
+        class="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl focus:outline-none focus:border-accent transition-colors text-sm">
+    </div>
+
+    <!-- Assignee -->
+    <div>
+      <label for="bug-assignee" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Assignee (optional)</label>
+      <select id="bug-assignee" formControlName="assigneeId"
+        class="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl focus:outline-none focus:border-accent transition-colors text-sm appearance-none cursor-pointer">
+        <option [ngValue]="null">Unassigned</option>
+        @for (member of userLookup.members(); track member.id) {
+          <option [value]="member.id">{{ member.name }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Labels -->
+    <div>
+      <span id="bug-labels" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Labels</span>
+      <div role="group" aria-labelledby="bug-labels" class="flex flex-wrap gap-2">
+        @for (label of store.labels(); track label.id) {
+          <button type="button" (click)="toggleLabel(label.id)"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all"
+            [style.border-color]="selectedLabelIds().includes(label.id) ? label.color : 'transparent'"
+            [style.background-color]="selectedLabelIds().includes(label.id) ? label.color + '20' : 'var(--bg-elevated)'"
+            [style.color]="selectedLabelIds().includes(label.id) ? label.color : 'var(--text-muted)'">
+            <span class="w-2 h-2 rounded-full" [style.background-color]="label.color"></span>
+            {{ label.name }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label for="bug-description" class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Description *</label>
+      <textarea id="bug-description" formControlName="description"
+        placeholder="Steps to reproduce, expected vs actual behavior..."
+        rows="5"
+        class="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl focus:outline-none focus:border-accent transition-colors resize-none text-sm"
+        [class.border-error]="bugForm.get('description')?.invalid && bugForm.get('description')?.touched"></textarea>
+    </div>
+
+    <!-- Footer -->
+    <div footer class="flex justify-end gap-3 w-full">
+      <button type="button" (click)="onClose()"
+        class="px-6 py-2.5 rounded-xl font-semibold text-text-secondary hover:bg-bg-hover transition-colors">
+        Cancel
+      </button>
+      <button type="submit"
+        class="px-8 py-2.5 rounded-xl font-bold bg-accent text-white hover:bg-accent-bright transition-all shadow-lg shadow-accent/20 disabled:opacity-50 disabled:cursor-not-allowed">
+        Submit Report
+      </button>
+    </div>
+  </form>
+</app-drawer>

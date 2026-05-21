@@ -1,0 +1,221 @@
+<div class="p-6 lg:p-8 max-w-7xl mx-auto space-y-8 animate-in">
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4" [@slideInAnimation]>
+    <div class="animate-in-right">
+      <h1 class="text-4xl font-display font-black text-text-primary tracking-tight">Projects</h1>
+      <p class="text-text-secondary mt-1 font-medium">Manage and track your development ecosystem</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <div class="relative hidden sm:block">
+        <lucide-icon [name]="Search" [size]="18" class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></lucide-icon>
+        <input 
+          type="text" 
+          placeholder="Search projects..." 
+          class="pl-10 pr-4 py-2 glass border border-border rounded-xl text-sm focus:outline-none focus:border-accent transition-all w-64 focus:w-80"
+          (input)="store.setSearch($any($event.target).value)"
+        >
+      </div>
+      
+      <button 
+        (click)="toggleViewMode()"
+        class="p-2.5 rounded-xl border border-border glass text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-all hover:scale-110 active:scale-95"
+        [title]="store.viewMode() === 'grid' ? 'Switch to List' : 'Switch to Grid'"
+      >
+        <lucide-icon [name]="store.viewMode() === 'grid' ? List : LayoutGrid" [size]="20"></lucide-icon>
+      </button>
+
+      @if (rbac.can('project:create')) {
+        <button
+          (click)="openCreateModal()"
+          class="btn-primary flex items-center gap-2"
+        >
+          <lucide-icon [name]="Plus" [size]="18"></lucide-icon>
+          <span>New Project</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (store.isLoading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="glass border border-border rounded-2xl p-6 space-y-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl skeleton"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 skeleton w-3/4"></div>
+              <div class="h-3 skeleton w-1/2"></div>
+            </div>
+          </div>
+          <div class="h-24 skeleton w-full"></div>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Project Grid -->
+    @if (store.viewMode() === 'grid') {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" [@listAnimation]="store.activeProjects().length">
+        @for (project of store.activeProjects(); track project.id; let i = $index) {
+          <div 
+            class="group glass rounded-2xl p-6 hover:lift relative overflow-hidden"
+            [routerLink]="['/projects', project.id]"
+          >
+
+
+            <!-- Project Accent Bar -->
+            <div class="absolute top-0 left-0 w-full h-1" [style.background-color]="project.color"></div>
+            
+            <div class="flex items-start justify-between mb-4">
+              <div 
+                class="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg"
+                [style.background-color]="project.color"
+              >
+                <lucide-icon [name]="iconMap[project.icon || 'folder'] || FolderOff" [size]="24"></lucide-icon>
+              </div>
+              
+              <!-- Removed dead MoreVertical button -->
+            </div>
+
+            <h3 class="text-lg font-bold text-text-primary group-hover:text-accent transition-colors">{{ project.name }}</h3>
+            <p class="text-sm text-text-secondary mt-2 line-clamp-2 min-h-[2.5rem]">{{ project.description }}</p>
+
+            <div class="mt-6 pt-4 border-t border-border/50 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-bg-elevated text-text-secondary border border-border">
+                  {{ project.type }}
+                </span>
+                <span class="text-xs text-text-muted flex items-center gap-1">
+                  <lucide-icon [name]="iconMap['bug']" [size]="12"></lucide-icon>
+                  {{ getBugCount(project.id) }}
+                </span>
+              </div>
+              
+              <div class="flex -space-x-2">
+                @for (memberId of project.memberIds.slice(0, 3); track memberId) {
+                  <div class="w-7 h-7 rounded-full border-2 border-bg-surface bg-bg-elevated flex items-center justify-center text-[10px] font-medium text-text-primary">
+                    {{ memberId.charAt(0).toUpperCase() }}
+                  </div>
+                }
+                @if (project.memberIds.length > 3) {
+                  <div class="w-7 h-7 rounded-full border-2 border-bg-surface bg-bg-elevated flex items-center justify-center text-[10px] font-medium text-text-muted">
+                    +{{ project.memberIds.length - 3 }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+        
+        <!-- Add Project Card -->
+        @if (rbac.can('project:create')) {
+        <button
+          (click)="openCreateModal()"
+          class="group border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-text-muted hover:border-accent/50 hover:text-accent hover:bg-accent-subtle/20 transition-all duration-300 animate-scale"
+          [style.animation-delay]="(store.activeProjects().length * 50) + 'ms'"
+        >
+          <div class="w-14 h-14 rounded-full bg-bg-elevated/50 glass flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-all duration-500 group-hover:rotate-90">
+            <lucide-icon [name]="Plus" [size]="28"></lucide-icon>
+          </div>
+          <span class="font-bold tracking-tight">Create New Project</span>
+        </button>
+        }
+      </div>
+
+    } @else {
+      <!-- List View -->
+      <div class="bg-bg-surface border border-border rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-border bg-bg-elevated/50">
+              <th class="px-6 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Project</th>
+              <th class="px-6 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Type</th>
+              <th class="px-6 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Members</th>
+              <th class="px-6 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Bugs</th>
+              <th class="px-6 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider text-right">Last Activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (project of store.activeProjects(); track project.id) {
+              <tr 
+                class="border-b border-border/50 hover:bg-bg-hover transition-colors cursor-pointer group"
+                [routerLink]="['/projects', project.id]"
+              >
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div 
+                      class="w-10 h-10 rounded-lg flex items-center justify-center text-white flex-shrink-0"
+                      [style.background-color]="project.color"
+                    >
+                      <lucide-icon [name]="iconMap[project.icon || 'folder'] || FolderOff" [size]="20"></lucide-icon>
+                    </div>
+                    <div>
+                      <div class="font-bold text-text-primary group-hover:text-accent transition-colors">{{ project.name }}</div>
+                      <div class="text-xs text-text-muted line-clamp-1 w-64">{{ project.description }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-bg-elevated text-text-secondary border border-border">
+                    {{ project.type }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex -space-x-2">
+                    @for (memberId of project.memberIds.slice(0, 3); track memberId) {
+                      <div class="w-7 h-7 rounded-full border-2 border-bg-surface bg-bg-elevated flex items-center justify-center text-[10px] font-medium text-text-primary">
+                        {{ memberId.charAt(0).toUpperCase() }}
+                      </div>
+                    }
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-text-secondary">
+                  {{ getBugCount(project.id) }}
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div class="text-xs text-text-muted">{{ project.lastActivity | date:'MMM d, h:mm a' }}</div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (store.activeProjects().length === 0) {
+      <div class="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in duration-700">
+        <div class="relative mb-8">
+          <div class="w-32 h-32 rounded-3xl bg-accent/5 flex items-center justify-center rotate-6">
+            <lucide-icon [name]="FolderOff" [size]="64" class="text-accent/40"></lucide-icon>
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-16 h-16 rounded-2xl bg-bg-surface border border-border shadow-xl flex items-center justify-center -rotate-12">
+            <lucide-icon [name]="Plus" [size]="32" class="text-accent"></lucide-icon>
+          </div>
+        </div>
+        
+        <h2 class="text-2xl font-bold text-text-primary">Ready to build something?</h2>
+        <p class="text-text-secondary mt-2 max-w-sm mx-auto">
+          It looks like you don't have any projects yet. Create your first project to start tracking bugs and collaborating with your team.
+        </p>
+        
+        @if (rbac.can('project:create')) {
+        <button
+          (click)="openCreateModal()"
+          class="mt-10 flex items-center gap-3 px-8 py-4 bg-accent hover:bg-accent-bright text-white rounded-2xl font-bold transition-all shadow-xl shadow-accent/25 hover:scale-105 active:scale-95"
+        >
+          <lucide-icon [name]="Plus" [size]="24"></lucide-icon>
+          <span>Create First Project</span>
+        </button>
+        }
+      </div>
+    }
+  }
+
+  <!-- Modals -->
+  <app-project-create 
+    [isOpen]="isCreateModalOpen" 
+    (closed)="closeCreateModal()"
+  ></app-project-create>
+</div>

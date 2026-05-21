@@ -1,0 +1,339 @@
+<div class="p-6 lg:p-8 max-w-7xl mx-auto space-y-6 page-enter">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-text-primary">Bugs & Issues</h1>
+      <p class="text-text-secondary mt-1">Track and manage reports across all projects</p>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="relative">
+        <lucide-icon [name]="Search" [size]="18" class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></lucide-icon>
+        <input type="text" placeholder="Search issues..." (input)="onSearch($event)"
+          class="pl-10 pr-4 py-2 bg-bg-surface border border-border rounded-xl text-sm focus:outline-none focus:border-accent transition-colors w-56">
+      </div>
+      <button (click)="showFilterPanel.set(!showFilterPanel())"
+        class="flex items-center gap-2 p-2 rounded-xl border transition-all"
+        [class.border-accent]="store.hasActiveFilters()"
+        [class.bg-accent]="store.hasActiveFilters()"
+        [class.text-white]="store.hasActiveFilters()"
+        [class.border-border]="!store.hasActiveFilters()"
+        [class.bg-bg-surface]="!store.hasActiveFilters()"
+        [class.text-text-secondary]="!store.hasActiveFilters()">
+        <lucide-icon [name]="Filter" [size]="18"></lucide-icon>
+        <span class="text-sm font-medium">Filters</span>
+        @if (store.hasActiveFilters()) {
+        <span class="text-xs bg-white/20 px-1.5 py-0.5 rounded-full">Active</span>
+        }
+      </button>
+      <button (click)="toggleViewMode()"
+        class="p-2 rounded-xl border border-border bg-bg-surface text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-all"
+        [title]="viewMode === 'table' ? 'Switch to Kanban' : 'Switch to Table'">
+        <lucide-icon [name]="viewMode === 'table' ? LayoutGrid : List" [size]="20"></lucide-icon>
+      </button>
+      @if (rbac.can('bug:create')) {
+      <button (click)="openCreateDrawer()"
+        class="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-bright text-white rounded-xl font-medium transition-all shadow-lg shadow-accent/20">
+        <lucide-icon [name]="Plus" [size]="18"></lucide-icon>
+        <span>Report Bug</span>
+      </button>
+      }
+    </div>
+  </div>
+
+  @if (showFilterPanel()) {
+  <!-- Filter Panel -->
+  <div class="bg-bg-surface border border-border rounded-2xl p-6 shadow-sm space-y-4">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-sm font-bold text-text-primary">Advanced Filters</h3>
+      <button (click)="resetFilters(); showFilterPanel.set(false)" class="text-xs text-text-muted hover:text-error transition-colors flex items-center gap-1">
+        <lucide-icon [name]="X" [size]="14"></lucide-icon> Clear All
+      </button>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Status -->
+      <div>
+        <label for="filter-status" class="block text-xs font-bold text-text-muted uppercase mb-2">Status</label>
+        <select id="filter-status" (change)="onStatusFilter($any($event.target).value)"
+          class="w-full px-3 py-2 bg-bg-elevated border border-border rounded-xl text-sm focus:outline-none focus:border-accent">
+          @for (s of statuses; track s) {
+          <option [value]="s" [selected]="store.filter().status === s">
+            {{ s === 'all' ? 'All Statuses' : s.replace('-', ' ') | titlecase }}
+          </option>
+          }
+        </select>
+      </div>
+      <!-- Priority -->
+      <div>
+        <label for="filter-priority" class="block text-xs font-bold text-text-muted uppercase mb-2">Priority</label>
+        <select id="filter-priority" (change)="onPriorityFilter($any($event.target).value)"
+          class="w-full px-3 py-2 bg-bg-elevated border border-border rounded-xl text-sm focus:outline-none focus:border-accent">
+          @for (p of priorities; track p) {
+          <option [value]="p" [selected]="store.filter().priority === p">
+            {{ p === 'all' ? 'All Priorities' : p | titlecase }}
+          </option>
+          }
+        </select>
+      </div>
+      <!-- Project -->
+      <div>
+        <label for="filter-project" class="block text-xs font-bold text-text-muted uppercase mb-2">Project</label>
+        <select id="filter-project" (change)="onProjectFilter($any($event.target).value)"
+          class="w-full px-3 py-2 bg-bg-elevated border border-border rounded-xl text-sm focus:outline-none focus:border-accent">
+          <option value="all">All Projects</option>
+          @for (p of projectStore.projects(); track p.id) {
+          <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+      </div>
+      <!-- Label -->
+      <div>
+        <label for="filter-label" class="block text-xs font-bold text-text-muted uppercase mb-2">Label</label>
+        <select id="filter-label" (change)="onLabelFilter($any($event.target).value)"
+          class="w-full px-3 py-2 bg-bg-elevated border border-border rounded-xl text-sm focus:outline-none focus:border-accent">
+          <option value="all">All Labels</option>
+          @for (l of store.labels(); track l.id) {
+          <option [value]="l.id">{{ l.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <!-- Active filter chips -->
+    @if (store.hasActiveFilters()) {
+    <div class="flex flex-wrap gap-2 pt-2 border-t border-border">
+      @if (store.filter().status !== 'all') {
+      <span class="flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent rounded-full text-xs font-bold">
+        Status: {{ store.filter().status }}
+        <button (click)="onStatusFilter('all')"><lucide-icon [name]="X" [size]="12"></lucide-icon></button>
+      </span>
+      }
+      @if (store.filter().priority !== 'all') {
+      <span class="flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent rounded-full text-xs font-bold">
+        Priority: {{ store.filter().priority }}
+        <button (click)="onPriorityFilter('all')"><lucide-icon [name]="X" [size]="12"></lucide-icon></button>
+      </span>
+      }
+      @if (store.filter().projectId !== 'all') {
+      <span class="flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent rounded-full text-xs font-bold">
+        Project: {{ getProjectName(store.filter().projectId) }}
+        <button (click)="onProjectFilter('all')"><lucide-icon [name]="X" [size]="12"></lucide-icon></button>
+      </span>
+      }
+      @if (store.filter().labelId !== 'all') {
+      <span class="flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent rounded-full text-xs font-bold">
+        Label: {{ getLabelName(store.filter().labelId) }}
+        <button (click)="onLabelFilter('all')"><lucide-icon [name]="X" [size]="12"></lucide-icon></button>
+      </span>
+      }
+    </div>
+    }
+  </div>
+  }
+
+  @if (viewMode === 'table') {
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" [@slideInAnimation]>
+      <div class="glass border border-border rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-error/10 text-error flex items-center justify-center">
+          <lucide-icon [name]="BugIcon" [size]="20"></lucide-icon>
+        </div>
+        <div>
+          <div class="text-xl font-bold text-text-primary">{{ store.bugCount() }}</div>
+          <div class="text-xs text-text-muted uppercase tracking-wider">Total</div>
+        </div>
+      </div>
+      <div class="glass border border-border rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-warning/10 text-warning flex items-center justify-center">
+          <lucide-icon [name]="AlertCircle" [size]="20"></lucide-icon>
+        </div>
+        <div>
+          <div class="text-xl font-bold text-text-primary">{{ store.openBugsCount() }}</div>
+          <div class="text-xs text-text-muted uppercase tracking-wider">Open</div>
+        </div>
+      </div>
+      <div class="glass border border-border rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-info/10 text-info flex items-center justify-center">
+          <lucide-icon [name]="Clock" [size]="20"></lucide-icon>
+        </div>
+        <div>
+          <div class="text-xl font-bold text-text-primary">{{ store.inProgressCount() }}</div>
+          <div class="text-xs text-text-muted uppercase tracking-wider">In Progress</div>
+        </div>
+      </div>
+      <div class="glass border border-border rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-success/10 text-success flex items-center justify-center">
+          <lucide-icon [name]="CheckCircle" [size]="20"></lucide-icon>
+        </div>
+        <div>
+          <div class="text-xl font-bold text-text-primary">{{ store.filteredBugs().length }}</div>
+          <div class="text-xs text-text-muted uppercase tracking-wider">Filtered</div>
+        </div>
+      </div>
+    </div>
+
+    @if (store.selectedIds().length > 0) {
+    <div class="flex items-center gap-3 px-4 py-3 bg-accent/10 border border-accent/30 rounded-xl">
+      <span class="text-sm font-bold text-accent">{{ store.selectedIds().length }} selected</span>
+      <div class="flex-1"></div>
+      <!-- Bulk Status -->
+      <div class="relative">
+        <button (click)="showBulkMenu.set(!showBulkMenu())"
+          class="flex items-center gap-2 px-3 py-1.5 bg-bg-surface border border-border rounded-lg text-sm font-medium hover:bg-bg-hover transition-all">
+          Set Status <lucide-icon [name]="ChevronDown" [size]="14"></lucide-icon>
+        </button>
+        @if (showBulkMenu()) {
+        <div class="absolute top-full mt-1 right-0 bg-bg-surface border border-border rounded-xl shadow-xl z-50 min-w-[140px] overflow-hidden">
+          @for (s of ['open','in-progress','testing','closed','blocked']; track s) {
+          <button (click)="bulkSetStatus($any(s))"
+            class="w-full text-left px-4 py-2 text-sm hover:bg-bg-hover transition-colors capitalize">
+            {{ s.replace('-', ' ') }}
+          </button>
+          }
+        </div>
+        }
+      </div>
+      <!-- Bulk Priority -->
+      <div class="relative">
+        <button (click)="showBulkPriorityMenu.set(!showBulkPriorityMenu())"
+          class="flex items-center gap-2 px-3 py-1.5 bg-bg-surface border border-border rounded-lg text-sm font-medium hover:bg-bg-hover transition-all">
+          Set Priority <lucide-icon [name]="ChevronDown" [size]="14"></lucide-icon>
+        </button>
+        @if (showBulkPriorityMenu()) {
+        <div class="absolute top-full mt-1 right-0 bg-bg-surface border border-border rounded-xl shadow-xl z-50 min-w-[140px] overflow-hidden">
+          @for (p of ['low','medium','high','critical']; track p) {
+          <button (click)="bulkSetPriority($any(p))"
+            class="w-full text-left px-4 py-2 text-sm hover:bg-bg-hover transition-colors capitalize">
+            {{ p }}
+          </button>
+          }
+        </div>
+        }
+      </div>
+      @if (rbac.can('bug:delete')) {
+      <button (click)="bulkDelete()"
+        class="flex items-center gap-2 px-3 py-1.5 bg-error/10 border border-error/20 text-error rounded-lg text-sm font-medium hover:bg-error hover:text-white transition-all">
+        <lucide-icon [name]="Trash" [size]="16"></lucide-icon> Delete
+      </button>
+      }
+      <button (click)="store.clearSelection()" class="p-1.5 rounded-lg hover:bg-bg-hover text-text-muted transition-colors">
+        <lucide-icon [name]="X" [size]="16"></lucide-icon>
+      </button>
+    </div>
+    }
+
+    <!-- Table -->
+    <div class="glass border border-border rounded-2xl overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[800px]">
+          <thead>
+            <tr class="border-b border-border bg-bg-elevated/30">
+              <th class="px-4 py-4 w-10">
+                <input type="checkbox" [checked]="allSelected()" (change)="toggleSelectAll()"
+                  class="w-4 h-4 rounded accent-accent cursor-pointer">
+              </th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest">Issue</th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest">Status</th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest">Priority</th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest">Labels</th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest">Project</th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest">Assignee</th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest text-right">Due Date</th>
+              <th class="px-4 py-4 text-xs font-bold text-text-muted uppercase tracking-widest text-right">Created</th>
+            </tr>
+          </thead>
+          <tbody [@listAnimation]="store.filteredBugs().length">
+            @for (bug of store.filteredBugs(); track bug.id) {
+              <tr class="border-b border-border/50 hover:bg-bg-hover transition-colors cursor-pointer group"
+                [class.bg-accent/5]="store.selectedIds().includes(bug.id)"
+                [routerLink]="['/bugs', bug.id]">
+                <td class="px-4 py-4" (click)="toggleSelect(bug.id, $event)">
+                  <input type="checkbox" [checked]="store.selectedIds().includes(bug.id)"
+                    class="w-4 h-4 rounded accent-accent cursor-pointer pointer-events-none">
+                </td>
+                <td class="px-4 py-4 max-w-xs">
+                  <div class="font-bold text-text-primary group-hover:text-accent transition-colors truncate">{{ bug.title }}</div>
+                  <div class="text-[11px] text-text-muted font-mono mt-0.5">#BT-{{ bug.id.toUpperCase() }}</div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase border w-fit"
+                    [ngClass]="getStatusColor(bug.status)">
+                    <lucide-icon [name]="getStatusIcon(bug.status)" [size]="12"></lucide-icon>
+                    {{ bug.status.replace('-', ' ') }}
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase border"
+                    [ngClass]="getPriorityColor(bug.priority)">{{ bug.priority }}</span>
+                </td>
+                <td class="px-4 py-4">
+                  <div class="flex flex-wrap gap-1">
+                    @for (lid of bug.labelIds.slice(0,2); track lid) {
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold text-white"
+                      [style.background-color]="getLabelColor(lid)">
+                      {{ getLabelName(lid) }}
+                    </span>
+                    }
+                    @if (bug.labelIds.length > 2) {
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-bg-elevated text-text-muted">
+                      +{{ bug.labelIds.length - 2 }}
+                    </span>
+                    }
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-text-secondary">{{ getProjectName(bug.projectId) }}</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
+                      [style.background-color]="userLookup.getColor(bug.assigneeId)">
+                      {{ userLookup.getInitials(bug.assigneeId) }}
+                    </div>
+                    <span class="text-xs text-text-secondary truncate max-w-[80px]">{{ userLookup.getName(bug.assigneeId) }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-right text-xs text-text-muted">{{ bug.dueDate ? (bug.dueDate | date:'MMM d') : '-' }}</td>
+                <td class="px-4 py-4 text-right text-xs text-text-muted">{{ bug.createdAt | date:'MMM d' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (store.filteredBugs().length === 0) {
+      <div class="p-16 text-center">
+        <lucide-icon [name]="BugIcon" [size]="40" class="mx-auto mb-4 text-text-muted opacity-30"></lucide-icon>
+        <h3 class="text-lg font-bold text-text-primary">No issues found</h3>
+        <p class="text-text-secondary text-sm mt-1">Try adjusting your filters.</p>
+        @if (store.hasActiveFilters()) {
+        <button (click)="resetFilters()" class="mt-4 px-4 py-2 bg-accent text-white rounded-xl text-sm font-bold hover:bg-accent-bright transition-all">
+          Clear Filters
+        </button>
+        }
+      </div>
+      }
+    </div>
+  } @else {
+    @defer (on viewport; prefetch on idle) {
+      <app-bug-kanban (addIssue)="openCreateDrawer()"></app-bug-kanban>
+    } @placeholder {
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[400px]">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="glass border border-border rounded-2xl p-4 space-y-4 animate-pulse">
+            <div class="h-6 bg-bg-elevated rounded-lg w-1/2"></div>
+            <div class="h-24 bg-bg-elevated rounded-xl"></div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <app-bug-create [isOpen]="isCreateDrawerOpen" (closed)="closeCreateDrawer()"></app-bug-create>
+</div>
+
+<app-confirm-dialog
+  [isOpen]="showBulkDeleteConfirm()"
+  title="Delete Selected Issues"
+  [message]="'Permanently delete ' + store.selectedIds().length + ' selected issues? This cannot be undone.'"
+  confirmLabel="Delete All"
+  cancelLabel="Cancel"
+  variant="danger"
+  (confirmed)="confirmBulkDelete()"
+  (cancelled)="showBulkDeleteConfirm.set(false)">
+</app-confirm-dialog>

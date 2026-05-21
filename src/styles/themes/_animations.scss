@@ -1,32 +1,112 @@
-// Route transitions
-.page-enter { opacity: 0; transform: translateY(8px); }
-.page-enter-active { 
-  transition: opacity 200ms ease, transform 200ms ease; 
+// Page & Content Entry
+@keyframes fadeInSlideUp {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-// Skeleton shimmer
-@keyframes shimmer {
-  from { background-position: -200% 0; }
-  to   { background-position: 200% 0; }
+@keyframes fadeInSlideRight {
+  0% { opacity: 0; transform: translateX(-12px); }
+  100% { opacity: 1; transform: translateX(0); }
 }
 
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--bg-elevated) 25%,
-    var(--bg-hover) 50%,
-    var(--bg-elevated) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+@keyframes scaleIn {
+  0% { opacity: 0; transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-// Priority pulse (Critical bugs pulse red)
-@keyframes criticalPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-  50%       { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-8px); }
+  30%       { transform: translateX(8px); }
+  45%       { transform: translateX(-6px); }
+  60%       { transform: translateX(6px); }
+  75%       { transform: translateX(-3px); }
+  90%       { transform: translateX(3px); }
 }
 
-// Drag ghost (Kanban)
-.cdk-drag-placeholder { opacity: 0.3; border: 2px dashed var(--accent); }
-.cdk-drag-animating { transition: transform 250ms cubic-bezier(0, 0, 0.2, 1); }
+// ── Utility classes ──────────────────────────────────────────────
+
+// Page entry — used on every routed page
+.page-enter {
+  animation: fadeInSlideUp 0.3s ease-out forwards;
+}
+
+.animate-in {
+  animation: fadeInSlideUp 0.3s ease-out forwards;
+}
+
+.animate-in-right {
+  animation: fadeInSlideRight 0.3s ease-out forwards;
+}
+
+.animate-scale {
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+// Used in command palette
+.animate-scale-in {
+  animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+// Used in dashboard bento items
+.animate-reveal {
+  animation: fadeInSlideUp 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+// Shake — login error
+.shake-animation {
+  animation: shake 0.45s ease-in-out;
+}
+
+// ── Hover effects ────────────────────────────────────────────────
+
+// Used as .hover:lift in templates (Tailwind arbitrary variant)
+// AND as .hover-lift in SCSS
+.hover-lift,
+.lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Tailwind-compatible: class="hover:lift" won't work, but class="lift" will
+// Templates use "hover:lift" — we handle this via a CSS selector trick:
+[class*="hover:lift"],
+.hover\:lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[class*="hover:lift"]:hover,
+.hover\:lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);
+}
+
+.hover-glow {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  &:hover {
+    box-shadow: 0 0 10px var(--accent-subtle);
+    border-color: var(--accent);
+  }
+}
+
+// ── Drag & Drop ──────────────────────────────────────────────────
+.cdk-drag-placeholder {
+  opacity: 0.4;
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--accent-subtle);
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms ease;
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-md);
+  opacity: 0.95;
+}

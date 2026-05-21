@@ -1,68 +1,143 @@
-<header class="h-16 bg-bg-surface border-b border-border flex items-center justify-between px-4 z-20">
-  
-  <!-- Left Side -->
-  <div class="flex items-center gap-4">
-    <!-- Mobile Menu / Desktop Collapse -->
-    <button 
-      (click)="toggleSidebar.emit()"
-      class="p-2 -ml-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors hidden md:block"
-    >
-      <lucide-icon name="menu" [size]="20"></lucide-icon>
-    </button>
+<header class="h-20 glass border-b border-border px-6 lg:px-10 flex items-center justify-between sticky top-0 z-50">
 
-    <!-- Global Search -->
-    <button class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-base border border-border text-text-muted hover:border-border-strong hover:text-text-primary transition-colors group">
-      <lucide-icon name="search" [size]="16"></lucide-icon>
-      <span class="text-sm">Search...</span>
-      <div class="hidden sm:flex items-center gap-1 ml-4 px-1.5 py-0.5 rounded bg-bg-elevated border border-border group-hover:border-border-strong transition-colors text-[10px] font-medium tracking-wider uppercase">
-        <kbd>Cmd</kbd> <kbd>K</kbd>
-      </div>
+  <!-- Left: Sidebar Toggle & Breadcrumb -->
+  <div class="flex items-center gap-6">
+    <button (click)="toggleSidebar.emit()"
+      class="p-2.5 rounded-xl text-text-muted hover:bg-bg-hover hover:text-text-primary transition-all lg:hidden">
+      <lucide-icon [name]="Menu" [size]="20"></lucide-icon>
     </button>
+    <div class="flex items-center gap-3 text-sm font-medium">
+      <span class="text-text-muted/60 hidden sm:block">BugTrackr</span>
+      <lucide-icon [name]="ChevronRight" [size]="14" class="text-border hidden sm:block"></lucide-icon>
+      <span class="font-black text-text-primary tracking-tight">{{ currentPage() }}</span>
+    </div>
   </div>
 
-  <!-- Right Side -->
-  <div class="flex items-center gap-2 sm:gap-4">
-    
-    <!-- Notifications -->
-    <button class="p-2 rounded-full text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors relative">
-      <lucide-icon name="bell" [size]="20"></lucide-icon>
-      <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+  <!-- Right: Theme, Notifications, User -->
+  <div class="flex items-center gap-3 sm:gap-5">
+
+    <!-- Search / Command Palette -->
+    <button class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-bg-elevated border border-border rounded-lg text-sm text-text-muted hover:text-text-primary hover:border-accent/50 transition-colors">
+      <lucide-icon [name]="Search" [size]="14"></lucide-icon>
+      <span class="mr-4">Search...</span>
+      <kbd class="px-1.5 py-0.5 rounded bg-bg-surface border border-border text-[10px] font-bold font-mono">Ctrl+K</kbd>
     </button>
 
-    <div class="w-px h-6 bg-border mx-1"></div>
+    <!-- Theme Switcher -->
+    <div class="relative">
+      <button (click)="toggleThemeMenu()"
+        class="p-2.5 rounded-xl text-text-muted hover:bg-bg-hover hover:text-text-primary transition-all hover:scale-110 active:scale-95"
+        [class.text-accent]="showThemeMenu()">
+        <lucide-icon [name]="Palette" [size]="20"></lucide-icon>
+      </button>
+      @if (showThemeMenu()) {
+        <div class="absolute right-0 mt-3 w-64 glass rounded-2xl shadow-2xl overflow-hidden py-3 z-[100] animate-scale">
+          <div class="px-5 py-2 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] border-b border-border mb-2">Visual Theme</div>
+          @for (theme of themes; track theme.id) {
+            <button (click)="setTheme(theme.id)"
+              class="w-full px-5 py-3 flex items-center gap-4 hover:bg-bg-hover transition-all text-left group"
+              [class.bg-accent/10]="themeService.currentTheme() === theme.id">
+              <div class="w-5 h-5 rounded-full border-2 border-white/20 shadow-sm flex-shrink-0"
+                [style.background-color]="theme.color"></div>
+              <span class="text-sm font-bold tracking-tight text-text-primary">{{ theme.label }}</span>
+              @if (themeService.currentTheme() === theme.id) {
+                <div class="ml-auto w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_var(--accent)]"></div>
+              }
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Notifications -->
+    <div class="relative">
+      <button (click)="toggleNotifPanel()"
+        class="p-2.5 rounded-xl text-text-muted hover:bg-bg-hover hover:text-text-primary transition-all relative hover:scale-110 active:scale-95"
+        [class.text-accent]="showNotifPanel()">
+        <lucide-icon [name]="Bell" [size]="20"></lucide-icon>
+        @if (notifService.unreadCount() > 0) {
+          <span class="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] bg-error rounded-full border-2 border-bg-surface text-[10px] font-bold text-white flex items-center justify-center px-0.5">
+            {{ notifService.unreadCount() > 9 ? '9+' : notifService.unreadCount() }}
+          </span>
+        }
+      </button>
+      @if (showNotifPanel()) {
+        <div class="absolute right-0 mt-3 w-80 glass rounded-2xl shadow-2xl overflow-hidden z-[100] animate-scale">
+          <div class="px-5 py-3 border-b border-border flex items-center justify-between">
+            <span class="text-sm font-bold text-text-primary">Notifications</span>
+            <div class="flex items-center gap-2">
+              @if (notifService.unreadCount() > 0) {
+                <button (click)="notifService.markAllRead()" class="text-xs text-accent hover:text-accent-bright transition-colors font-medium">Mark all read</button>
+              }
+              <button (click)="showNotifPanel.set(false)" class="p-1 rounded hover:bg-bg-hover text-text-muted transition-colors">
+                <lucide-icon [name]="X" [size]="14"></lucide-icon>
+              </button>
+            </div>
+          </div>
+          <div class="max-h-80 overflow-y-auto">
+            @if (notifService.notifications().length === 0) {
+              <div class="py-10 text-center text-text-muted text-sm">No notifications</div>
+            }
+            @for (notif of notifService.notifications(); track notif.id) {
+              <div class="px-5 py-3.5 border-b border-border/50 hover:bg-bg-hover transition-colors flex gap-3 cursor-pointer"
+                [class.bg-accent/5]="!notif.read"
+                (click)="onNotificationClick(notif)"
+                (keydown.enter)="onNotificationClick(notif)"
+                tabindex="0">
+                <div class="w-2 h-2 rounded-full mt-2 flex-shrink-0"
+                  [class.bg-accent]="!notif.read" [class.bg-transparent]="notif.read"></div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-text-primary">{{ notif.title }}</p>
+                  <p class="text-xs text-text-muted mt-0.5 truncate">{{ notif.message }}</p>
+                  <p class="text-[10px] text-text-muted mt-1">{{ notif.timestamp | date:'MMM d, h:mm a' }}</p>
+                </div>
+                <button (click)="$event.stopPropagation(); notifService.remove(notif.id)"
+                  class="p-1 rounded hover:bg-bg-hover text-text-muted hover:text-error transition-colors flex-shrink-0">
+                  <lucide-icon [name]="X" [size]="12"></lucide-icon>
+                </button>
+              </div>
+            }
+          </div>
+          @if (notifService.notifications().length > 0) {
+            <div class="px-5 py-3 border-t border-border">
+              <button (click)="notifService.clearAll()" class="text-xs text-text-muted hover:text-error transition-colors">Clear all</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="w-px h-8 bg-border mx-1 hidden sm:block"></div>
 
     <!-- User Menu -->
     <div class="relative">
-      <button 
-        (click)="toggleUserMenu()"
-        class="flex items-center gap-2 p-1 rounded-full hover:bg-bg-hover transition-colors focus:outline-none"
-      >
-        <div class="w-8 h-8 rounded-full bg-accent-subtle flex items-center justify-center overflow-hidden">
-          @if (user?.avatarUrl) {
-            <img [src]="user?.avatarUrl" [alt]="user?.fullName" class="w-full h-full object-cover">
-          } @else {
-            <span class="text-accent text-sm font-bold">{{ user?.fullName?.charAt(0) || 'U' }}</span>
-          }
+      <button (click)="toggleUserMenu()"
+        class="flex items-center gap-3 p-1.5 pl-1.5 pr-4 rounded-2xl hover:bg-bg-hover transition-all border border-transparent group"
+        [class.bg-bg-hover]="showUserMenu()">
+        <div class="w-10 h-10 rounded-xl bg-accent text-white flex items-center justify-center font-black text-sm shadow-xl shadow-accent/20 group-hover:rotate-6 transition-transform">
+          {{ user?.fullName?.charAt(0) || 'U' }}
+        </div>
+        <div class="hidden md:block text-left">
+          <div class="text-sm font-black text-text-primary leading-none tracking-tight">{{ user?.fullName }}</div>
+          <div class="text-[10px] text-text-muted font-bold mt-1 uppercase tracking-wider">{{ user?.email }}</div>
         </div>
       </button>
-
-      <!-- Dropdown -->
-      @if (showUserMenu) {
-        <div class="absolute right-0 mt-2 w-48 rounded-xl bg-bg-elevated border border-border shadow-lg py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div class="px-4 py-2 border-b border-border">
-            <p class="text-sm font-medium text-text-primary truncate">{{ user?.fullName || 'User' }}</p>
-            <p class="text-xs text-text-muted truncate">{{ user?.email || 'user@example.com' }}</p>
-          </div>
-          <button class="w-full text-left px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover flex items-center gap-2 transition-colors">
-            <lucide-icon name="user" [size]="16"></lucide-icon>
-            Profile
+      @if (showUserMenu()) {
+        <div class="absolute right-0 mt-3 w-64 glass rounded-2xl shadow-2xl overflow-hidden py-3 z-[100] animate-scale">
+          <button routerLink="/settings" (click)="showUserMenu.set(false)"
+            class="w-full px-5 py-3.5 flex items-center gap-4 hover:bg-bg-hover transition-all text-left text-text-primary group">
+            <div class="w-8 h-8 rounded-lg bg-bg-elevated flex items-center justify-center group-hover:scale-110 transition-transform">
+              <lucide-icon [name]="UserIcon" [size]="18" class="text-text-muted"></lucide-icon>
+            </div>
+            <span class="text-sm font-bold tracking-tight">Identity Settings</span>
           </button>
-          <button 
-            (click)="logout()"
-            class="w-full text-left px-4 py-2 text-sm text-error hover:bg-error/10 flex items-center gap-2 transition-colors"
-          >
-            <lucide-icon name="log-out" [size]="16"></lucide-icon>
-            Log out
+          <div class="h-px bg-border my-2"></div>
+          <button (click)="logout()"
+            class="w-full px-5 py-3.5 flex items-center gap-4 hover:bg-bg-hover transition-all text-left text-error group">
+            <div class="w-8 h-8 rounded-lg bg-error/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <lucide-icon [name]="LogOut" [size]="18"></lucide-icon>
+            </div>
+            <span class="text-sm font-black tracking-tight">Terminate Session</span>
           </button>
         </div>
       }

@@ -1,0 +1,132 @@
+<div class="h-full flex flex-col bg-bg-base page-enter">
+  <header class="bg-bg-surface border-b border-border px-6 py-6 sticky top-0 z-20">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-text-primary">Labels</h1>
+        <p class="text-text-secondary mt-1">Manage labels to categorize your issues</p>
+      </div>
+      @if (rbac.can('label:manage')) {
+      <button (click)="showCreate.set(true)"
+        class="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-xl font-medium hover:bg-accent-bright transition-all shadow-lg shadow-accent/20">
+        <lucide-icon [name]="Plus" [size]="18"></lucide-icon> New Label
+      </button>
+      }
+    </div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto p-6 lg:p-8">
+    <div class="max-w-4xl mx-auto space-y-4">
+
+      <!-- Create Form -->
+      @if (showCreate()) {
+      <div class="bg-bg-surface border border-accent/30 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-sm font-bold text-text-primary mb-4">Create New Label</h3>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <input type="text" [value]="newName()" (input)="newName.set($any($event.target).value)" placeholder="Label name..."
+            class="flex-1 px-4 py-2.5 bg-bg-elevated border border-border rounded-xl text-sm focus:outline-none focus:border-accent transition-all">
+          <div role="group" aria-label="Color picker" class="flex gap-2 flex-wrap">
+            @for (c of presetColors; track c) {
+            <button type="button" (click)="newColor.set(c)" aria-label="Select color {{c}}"
+              class="w-7 h-7 rounded-full border-2 transition-all"
+              [style.background-color]="c"
+              [class.border-white]="newColor() === c"
+              [class.border-transparent]="newColor() !== c"
+              [class.scale-125]="newColor() === c"></button>
+            }
+          </div>
+          <div class="flex gap-2">
+            <button (click)="createLabel()" [disabled]="!newName().trim()"
+              class="px-4 py-2.5 bg-accent text-white rounded-xl text-sm font-bold hover:bg-accent-bright transition-all disabled:opacity-50">
+              Create
+            </button>
+            <button (click)="showCreate.set(false); newName.set('')"
+              class="px-4 py-2.5 bg-bg-elevated text-text-muted rounded-xl text-sm font-bold hover:bg-bg-hover transition-all">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Labels List -->
+      <div class="bg-bg-surface border border-border rounded-2xl overflow-hidden shadow-sm" [@listAnimation]="store.labels().length">
+        @for (label of store.labels(); track label.id) {
+        <div class="flex items-center gap-4 px-6 py-4 border-b border-border/50 last:border-0 hover:bg-bg-hover transition-colors group">
+
+          @if (editingId() !== label.id) {
+          <div class="flex items-center gap-3 flex-1">
+            <span class="w-4 h-4 rounded-full flex-shrink-0" [style.background-color]="label.color"></span>
+            <span class="text-sm font-bold text-text-primary">{{ label.name }}</span>
+            <span class="text-xs text-text-muted px-2 py-0.5 bg-bg-elevated rounded-full">
+              {{ getBugCount(label.id) }} issues
+            </span>
+          </div>
+          }
+
+          <!-- Edit mode -->
+          @if (editingId() === label.id) {
+          <div class="flex items-center gap-3 flex-1">
+            <div role="group" aria-label="Edit color picker" class="flex gap-1.5">
+              @for (c of presetColors; track c) {
+              <button type="button" (click)="editColor.set(c)" aria-label="Select color {{c}}"
+                class="w-5 h-5 rounded-full border-2 transition-all"
+                [style.background-color]="c"
+                [class.border-white]="editColor() === c"
+                [class.border-transparent]="editColor() !== c"></button>
+              }
+            </div>
+            <input type="text" [value]="editName()" (input)="editName.set($any($event.target).value)"
+              class="flex-1 px-3 py-1.5 bg-bg-elevated border border-accent rounded-lg text-sm focus:outline-none">
+          </div>
+          }
+
+          <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            @if (editingId() !== label.id) {
+              @if (rbac.can('label:manage')) {
+              <button (click)="startEdit(label)" aria-label="Edit label"
+                class="p-1.5 rounded-lg hover:bg-bg-hover text-text-muted hover:text-accent transition-colors">
+                <lucide-icon [name]="Edit2" [size]="16"></lucide-icon>
+              </button>
+              }
+              @if (rbac.can('label:manage')) {
+              <button (click)="deleteLabel(label.id)" aria-label="Delete label"
+                class="p-1.5 rounded-lg hover:bg-bg-hover text-text-muted hover:text-error transition-colors">
+                <lucide-icon [name]="Trash" [size]="16"></lucide-icon>
+              </button>
+              }
+            }
+            @if (editingId() === label.id) {
+              <button (click)="saveEdit(label.id)" aria-label="Save changes"
+                class="p-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent hover:text-white transition-colors">
+                <lucide-icon [name]="Check" [size]="16"></lucide-icon>
+              </button>
+              <button (click)="editingId.set(null)" aria-label="Cancel editing"
+                class="p-1.5 rounded-lg hover:bg-bg-hover text-text-muted transition-colors">
+                <lucide-icon [name]="X" [size]="16"></lucide-icon>
+              </button>
+            }
+          </div>
+        </div>
+        }
+
+        @if (store.labels().length === 0) {
+        <div class="py-16 text-center text-text-muted">
+          <lucide-icon [name]="Tag" [size]="40" class="mx-auto mb-3 opacity-30"></lucide-icon>
+          <p class="text-sm">No labels yet. Create one to get started.</p>
+        </div>
+        }
+      </div>
+    </div>
+  </main>
+</div>
+
+<app-confirm-dialog
+  [isOpen]="deletingLabelId() !== null"
+  title="Delete Label"
+  [message]="deletingLabelId() ? 'Delete this label? It will be removed from ' + getBugCount(deletingLabelId()!) + ' issue(s).' : ''"
+  confirmLabel="Delete"
+  cancelLabel="Cancel"
+  variant="danger"
+  (confirmed)="confirmDeleteLabel()"
+  (cancelled)="deletingLabelId.set(null)">
+</app-confirm-dialog>

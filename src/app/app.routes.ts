@@ -28,15 +28,43 @@ export const routes: Routes = [
       // Placeholder for dashboard
       { 
         path: 'dashboard', 
-        loadComponent: () => import('./shared/components/badge/badge').then(m => m.Badge) // Just a placeholder to prevent error
+        loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard)
+      },
+      {
+        path: 'projects',
+        loadChildren: () => import('./features/projects/projects.routes').then(m => m.PROJECT_ROUTES)
+      },
+      {
+        path: 'bugs',
+        loadChildren: () => import('./features/bugs/bugs.routes').then(m => m.BUGS_ROUTES)
+      },
+      {
+        path: 'settings',
+        canActivate: [roleGuard([Role.Admin, Role.Owner])],
+        loadComponent: () => import('./features/settings/settings').then(m => m.Settings)
+      },
+      {
+        path: 'members',
+        canActivate: [roleGuard([Role.Admin, Role.Owner])],
+        loadComponent: () => import('./features/members/members').then(m => m.Members)
+      },
+      {
+        path: 'labels',
+        canActivate: [roleGuard([Role.Admin, Role.Owner, Role.Developer])],
+        loadComponent: () => import('./features/labels/labels').then(m => m.Labels)
       },
       {
         path: 'admin',
-        canActivate: [roleGuard([Role.Admin])],
+        canActivate: [roleGuard([Role.Admin, Role.Owner])],
         loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent)
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-  { path: '**', redirectTo: '/auth/login' }
+  {
+    path: 'unauthorized',
+    loadComponent: () => import('./features/auth/unauthorized/unauthorized').then(m => m.Unauthorized)
+  },
+  { path: 'not-found', loadComponent: () => import('./features/auth/not-found/not-found').then(m => m.NotFound) },
+  { path: '**', redirectTo: '/not-found' }
 ];

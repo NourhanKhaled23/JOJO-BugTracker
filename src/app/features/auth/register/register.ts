@@ -1,21 +1,23 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthStore } from '../store/auth.store';
-import { LucideAngularModule, Eye, EyeOff, Loader2, Upload, Check, ChevronRight, ChevronLeft } from 'lucide-angular';
+import { LucideAngularModule, Eye, EyeOff, Loader2, Upload, Check, ChevronRight, ChevronLeft, Bug } from 'lucide-angular';
 import { User } from '../../../core/models/user.model';
+import { Role } from '../../../core/enums/role';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule],
   templateUrl: './register.html',
-  styleUrl: './register.scss'
+  styleUrl: './register.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Register {
-  private fb = inject(FormBuilder);
-  private authStore = inject(AuthStore);
+  private readonly fb = inject(FormBuilder);
+  private readonly authStore = inject(AuthStore);
   
   // Icons
   readonly Eye = Eye;
@@ -25,31 +27,41 @@ export class Register {
   readonly Check = Check;
   readonly ChevronRight = ChevronRight;
   readonly ChevronLeft = ChevronLeft;
+  readonly BugIcon = Bug;
 
   currentStep = 1;
   showPassword = false;
   passwordStrength = 0; // 0-4
 
-  registerForm = this.fb.nonNullable.group({
+  readonly registerForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', [Validators.required]]
+  }, {
+    validators: (control) => {
+      const password = control.get('password')?.value;
+      const confirmPassword = control.get('confirmPassword')?.value;
+      if (password && confirmPassword && password !== confirmPassword) {
+        return { passwordsMismatch: true };
+      }
+      return null;
+    }
   });
 
-  get isLoading() {
+  get isLoading(): boolean {
     return this.authStore.isLoading();
   }
 
-  get error() {
+  get error(): string | null {
     return this.authStore.error();
   }
 
-  togglePassword() {
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  nextStep() {
+  nextStep(): void {
     if (this.currentStep === 1) {
       if (this.registerForm.get('fullName')?.invalid || this.registerForm.get('email')?.invalid) {
         this.registerForm.get('fullName')?.markAsTouched();
@@ -60,11 +72,11 @@ export class Register {
     }
   }
 
-  prevStep() {
+  prevStep(): void {
     this.currentStep = 1;
   }
 
-  checkPasswordStrength() {
+  checkPasswordStrength(): void {
     const pwd = this.registerForm.get('password')?.value || '';
     let strength = 0;
     if (pwd.length > 7) strength += 1;
@@ -74,13 +86,13 @@ export class Register {
     this.passwordStrength = strength;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
 
-    if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
+    if (this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) {
       this.authStore.setError('Passwords do not match');
       return;
     }
@@ -91,13 +103,31 @@ export class Register {
     setTimeout(() => {
       const { email, fullName } = this.registerForm.getRawValue();
       const mockUser: User = {
-        id: 'new-user-1',
+        id: 'usr-' + Date.now().toString(),
         fullName,
         email,
         avatarUrl: null,
-        role: 'owner',
+        role: Role.Developer,
         createdAt: new Date().toISOString()
       };
+
+      // Check registered users (but do NOT store passwords)
+      try {
+        const usersRaw = localStorage.getItem('bugtrackr_users');
+        const users = usersRaw ? JSON.parse(usersRaw) : [];
+
+        if (users.some((u: { email: string }) => u.email === email)) {
+          this.authStore.setError('Email already exists');
+          this.authStore.setLoading(false);
+          return;
+        }
+
+        users.push({ id: mockUser.id, fullName, email, role: 'Developer' });
+        localStorage.setItem('bugtrackr_users', JSON.stringify(users));
+      } catch {
+        // Ignore parsing errors
+      }
+
       this.authStore.login('mock-jwt-token-new', mockUser);
     }, 1500);
   }

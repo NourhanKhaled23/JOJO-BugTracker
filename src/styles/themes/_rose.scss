@@ -1,23 +1,26 @@
-// Rose Quartz Theme
+// Rose Garden — warm pink/mauve dark theme
 .theme-rose {
-  --bg-base: #0F0A0F;
-  --bg-surface: #1A1018;
-  --bg-elevated: #2A1A25;
-  --bg-hover: #3A2535;
-  --border: #2E1A2A;
-  --border-strong: #4A2A43;
+  --bg-base: #0d0608;
+  --bg-surface: #1a0d12;
+  --bg-elevated: #2a1520;
+  --bg-hover: #3d1f2e;
+  --border: #2a1520;
+  --border-strong: #3d1f2e;
 
-  --text-primary: #FFF0F5;
-  --text-secondary: #D4A0C4;
-  --text-muted: #9E7092;
+  --text-primary: #fdf2f8;
+  --text-secondary: #c4a0b4;
+  --text-muted: #8b6070;
 
-  // Accent: Pink
-  --accent: #EC4899;
-  --accent-bright: #F472B6;
+  // Accent: Rose Pink
+  --accent: #ec4899;
+  --accent-bright: #f472b6;
   --accent-subtle: rgba(236, 72, 153, 0.15);
 
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #0ea5e9;
+
+  --glass-bg: rgba(26, 13, 18, 0.85);
+  --glass-border: rgba(236, 72, 153, 0.12);
 }

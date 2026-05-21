@@ -39,6 +39,22 @@ testem.log
 /typings
 __screenshots__/
 
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# AI tool config
+.cline/
+.kiro/
+.windsurf/
+
+# Generated docs
+BugTrackr-Documentation.*
+
+# Lint outputs
+lint_*.txt
+
 # System files
 .DS_Store
 Thumbs.db

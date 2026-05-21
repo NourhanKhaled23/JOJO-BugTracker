@@ -6,27 +6,223 @@
 @use './styles/themes/_forest.scss';
 @use './styles/themes/_animations.scss';
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base.css";
+@import "tailwindcss/components.css";
+@import "tailwindcss/utilities.css";
 
-@layer base {
-  body {
-    @apply bg-bg-base text-text-primary font-sans antialiased;
-  }
+/* =========================================
+   BASE STYLES
+   ========================================= */
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: 
+    radial-gradient(at 0% 0%, var(--accent-subtle) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 50%);
+  background-attachment: fixed;
+}
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+::selection {
+  background-color: var(--accent-subtle);
+  color: var(--text-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* =========================================
+   COMPONENT STYLES
+   ========================================= */
+
+/* Card */
+.card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);
+}
+
+/* Glassmorphism — light blur only */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Glass Card */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.15);
+}
+
+.glass-card:hover {
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.25);
+  border-color: var(--accent);
+}
+
+/* Glow Text */
+.glow-text {
+  text-shadow: 0 0 20px var(--accent-subtle);
+}
+
+/* Bento Grid — responsive */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(180px, auto);
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(200px, auto);
   }
 }
 
-@layer components {
-  .card {
-    @apply bg-bg-surface border border-border rounded-xl transition-all duration-150 ease-out;
-    &:hover {
-      @apply -translate-y-[2px] shadow-[0_8px_24px_rgba(0,0,0,0.3)] border-accent-subtle;
-    }
-  }
+/* Bento Item */
+.bento-item {
+  background: var(--glass-bg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.2);
+}
+
+.bento-item:hover {
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent);
+}
+
+/* Primary Button */
+.btn-primary {
+  background-color: var(--accent);
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-bright));
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 4px 16px -4px var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* Secondary Button — NO backdrop-filter */
+.btn-secondary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+}
+
+/* Active Navigation Link */
+.active-nav {
+  background-color: var(--accent) !important;
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-bright)) !important;
+  color: white !important;
+  box-shadow: 0 8px 24px -8px var(--accent);
+}
+
+.active-nav lucide-icon {
+  color: white !important;
+  transform: scale(1.1);
+}
+
+/* Glow Effect */
+.glow {
+  box-shadow: 0 0 20px var(--accent-subtle);
+}
+
+/* Skeleton Loader */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  min-height: 1em;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0,
+    rgba(255, 255, 255, 0.04) 20%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Sidebar collapsed — clip overflow so text doesn't bleed */
+app-sidebar aside {
+  overflow: hidden;
+}
+
+app-sidebar aside span,
+app-sidebar aside .flex-col {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }

@@ -1,23 +1,26 @@
-// Forest Moss Theme
+// Deep Forest — earthy green dark theme
 .theme-forest {
-  --bg-base: #0A0F0A;
-  --bg-surface: #111A11;
-  --bg-elevated: #1A261A;
-  --bg-hover: #263826;
-  --border: #1F2E1F;
-  --border-strong: #334A33;
+  --bg-base: #020a04;
+  --bg-surface: #071a0a;
+  --bg-elevated: #0d2e12;
+  --bg-hover: #14421a;
+  --border: #0d2e12;
+  --border-strong: #14421a;
 
-  --text-primary: #F0FFF0;
-  --text-secondary: #8FBC8F;
-  --text-muted: #6B8E6B;
+  --text-primary: #e8fdf0;
+  --text-secondary: #7ab894;
+  --text-muted: #4a7d5c;
 
-  // Accent: Green
-  --accent: #22C55E;
-  --accent-bright: #4ADE80;
+  // Accent: Emerald Green
+  --accent: #22c55e;
+  --accent-bright: #4ade80;
   --accent-subtle: rgba(34, 197, 94, 0.15);
 
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #0ea5e9;
+
+  --glass-bg: rgba(7, 26, 10, 0.85);
+  --glass-border: rgba(34, 197, 94, 0.12);
 }

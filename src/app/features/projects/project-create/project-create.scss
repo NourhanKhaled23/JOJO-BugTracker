@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+input, textarea {
+  &::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+}
+
+.color-picker-item {
+  box-shadow: 0 0 0 2px var(--bg-surface);
+}

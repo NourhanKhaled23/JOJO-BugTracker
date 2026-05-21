@@ -1,59 +1,50 @@
-# Bugtrackr
+# 🐛 BugTrackr — Professional Bug Tracking System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+BugTrackr is a state-of-the-art bug tracking and project management system built with **Angular 21**, designed for high-performance teams. It features a modern "SaaS" aesthetic with 5 dynamic themes, real-time data visualization, and an intuitive Kanban-based workflow.
 
-## Development server
+## ✨ Key Features
 
-To start a local development server, run:
+- **📊 Interactive Dashboard**: Visualize project health with real-time Chart.js integration.
+- **📋 Issue Management**: track bugs with high-density tables or visual Kanban boards.
+- **📁 Project Hub**: Manage multiple development projects with custom branding (colors/icons).
+- **🎨 5 Premium Themes**: Switch instantly between Light, Dark, Ocean, Forest, and Rose modes.
+- **⚡ Performance First**: Built using Angular Signals and OnPush change detection for lightning-fast UI.
+- **🛡️ Secure Auth**: JWT-based authentication with protected routes and animated forms.
 
-```bash
-ng serve
-```
+## 🛠️ Technology Stack
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Framework**: [Angular 21](https://angular.io/) (Standalone Components, Signals)
+- **State Management**: [@ngrx/signals](https://ngrx.io/guide/signals)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [SCSS Themes](https://sass-lang.com/)
+- **Icons**: [Lucide Angular](https://lucide.dev/)
+- **Charts**: [Chart.js](https://www.chartjs.org/) + [ng2-charts](https://valor-software.com/ng2-charts/)
+- **Animations**: [Angular Animations](https://angular.io/guide/animations) + [GSAP](https://greensock.com/)
 
-## Code scaffolding
+## 🚀 Getting Started
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Prerequisites
+- Node.js v18+
+- npm v9+
 
-```bash
-ng generate component component-name
-```
+### Installation
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:4200](http://localhost:4200)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 📁 Project Structure
 
-```bash
-ng generate --help
-```
+- `src/app/core`: Singleton services, guards, interceptors, and models.
+- `src/app/shared`: Reusable components (Modals, Drawers, Badges).
+- `src/app/features`: Feature-based modules (Auth, Projects, Bugs, Dashboard).
+- `src/app/layout`: Application shell, Sidebar, and Topbar.
+- `src/styles/themes`: Custom SCSS theme definitions.
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+Built with ❤️ by the BugTrackr Team.

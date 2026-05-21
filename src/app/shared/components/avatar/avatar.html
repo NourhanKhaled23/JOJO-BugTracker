@@ -1,1 +1,15 @@
-<p>avatar works!</p>
+@if (src) {
+  <img 
+    [src]="src" 
+    [alt]="alt" 
+    [class]="'rounded-full object-cover ' + sizeClasses"
+  />
+} @else {
+  <div 
+    [class]="'rounded-full flex items-center justify-center font-bold ' + sizeClasses"
+    [style.background-color]="color || 'var(--accent)'"
+    [style.color]="'white'"
+  >
+    {{ initials || alt.charAt(0).toUpperCase() }}
+  </div>
+}

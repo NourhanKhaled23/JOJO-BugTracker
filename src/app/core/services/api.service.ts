@@ -6,15 +6,14 @@ import { environment } from '../../../environments/environment';
 export interface ApiOptions {
   params?: HttpParams | Record<string, string | number | boolean | readonly (string | number | boolean)[]>;
   headers?: HttpHeaders | Record<string, string | string[]>;
-  skipCache?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl;
-  private http = inject(HttpClient);
+  private readonly apiUrl = environment.apiUrl;
+  private readonly http = inject(HttpClient);
 
   get<T>(path: string, options?: ApiOptions): Observable<T> {
     return this.http.get<T>(`${this.apiUrl}${path}`, {

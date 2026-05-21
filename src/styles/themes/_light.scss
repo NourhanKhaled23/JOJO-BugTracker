@@ -1,22 +1,25 @@
 .theme-light {
-  --bg-base: #FAFAFA;
-  --bg-surface: #FFFFFF;
-  --bg-elevated: #F4F4F5;
-  --bg-hover: #E4E4E7;
-  --border: #E4E4E7;
-  --border-strong: #D4D4D8;
+  --bg-base: #f8fafc;      // Slate 50
+  --bg-surface: #ffffff;   // White
+  --bg-elevated: #f1f5f9;  // Slate 100
+  --bg-hover: #e2e8f0;     // Slate 200
+  --border: #e2e8f0;       // Slate 200
+  --border-strong: #cbd5e1; // Slate 300
 
-  --text-primary: #18181B;
-  --text-secondary: #52525B;
-  --text-muted: #A1A1AA;
+  --text-primary: #0f172a;   // Slate 900
+  --text-secondary: #475569; // Slate 600
+  --text-muted: #94a3b8;     // Slate 400
 
-  // Accent: Blue
-  --accent: #2563EB;
-  --accent-bright: #3B82F6;
+  // Accent: Royal Blue
+  --accent: #2563eb;
+  --accent-bright: #3b82f6;
   --accent-subtle: rgba(37, 99, 235, 0.1);
 
   --success: #059669;
-  --warning: #D97706;
-  --error: #DC2626;
-  --info: #2563EB;
+  --warning: #d97706;
+  --error: #dc2626;
+  --info: #0284c7;
+
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
 }

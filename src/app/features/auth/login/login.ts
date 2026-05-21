@@ -1,30 +1,39 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthStore } from '../store/auth.store';
-import { LucideAngularModule, Eye, EyeOff, Loader2 } from 'lucide-angular';
+import { AuthService } from '../../../core/auth/auth.service';
+import { LucideAngularModule, Eye, EyeOff, Loader2, Info, ArrowRight, Bug, AlertCircle } from 'lucide-angular';
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule],
   templateUrl: './login.html',
-  styleUrl: './login.scss'
+  styleUrl: './login.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Login {
-  private fb = inject(FormBuilder);
-  private authStore = inject(AuthStore);
+  private readonly fb = inject(FormBuilder);
+  private readonly authStore = inject(AuthStore);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   
   // Lucide Icons
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
   readonly Loader2 = Loader2;
+  readonly Info = Info;
+  readonly ArrowRight = ArrowRight;
+  readonly BugIcon = Bug;
+  readonly AlertCircle = AlertCircle;
 
   showPassword = false;
-  hasErrorShake = false;
+  hasErrorShake = signal(false);
 
-  loginForm = this.fb.nonNullable.group({
+  readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
     rememberMe: [false]
@@ -38,11 +47,11 @@ export class Login {
     return this.authStore.error();
   }
 
-  togglePassword() {
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -50,29 +59,27 @@ export class Login {
 
     this.authStore.setLoading(true);
 
-    // Mock API call
-    setTimeout(() => {
-      const { email, password } = this.loginForm.getRawValue();
-      
-      if (email === 'test@test.com' && password === 'password') {
-        const mockUser = {
-          id: '1',
-          fullName: 'Test User',
-          email: 'test@test.com',
-          avatarUrl: null,
-          role: 'admin' as const,
-          createdAt: new Date().toISOString()
-        };
-        this.authStore.login('mock-jwt-token-12345', mockUser);
-      } else {
-        this.authStore.setError('Invalid email or password');
-        this.triggerShakeAnimation();
+    const { email } = this.loginForm.getRawValue();
+    const password = this.loginForm.get('password')?.value || '';
+
+    const { user, error } = this.authService.loginWithCredentials(email, password);
+
+    if (user) {
+      this.authStore.login('mock-jwt-token-' + user.id, user);
+      const params = new URLSearchParams(window.location.search);
+      const returnUrl = params.get('returnUrl');
+      if (returnUrl) {
+        setTimeout(() => this.router.navigateByUrl(returnUrl), 0);
       }
-    }, 1000);
+    } else {
+      this.authStore.setLoading(false);
+      this.authStore.setError(error!);
+      this.triggerShakeAnimation();
+    }
   }
 
-  private triggerShakeAnimation() {
-    this.hasErrorShake = true;
-    setTimeout(() => this.hasErrorShake = false, 500); // Remove class after animation
+  private triggerShakeAnimation(): void {
+    this.hasErrorShake.set(true);
+    setTimeout(() => this.hasErrorShake.set(false), 500); // Remove class after animation
   }
 }

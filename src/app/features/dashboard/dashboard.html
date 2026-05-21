@@ -1,0 +1,177 @@
+<div class="p-6 lg:p-10 max-w-[1600px] mx-auto space-y-10" [@fadeAnimation]>
+  <!-- Header -->
+  <header class="flex flex-col md:flex-row md:items-end justify-between gap-6" [@slideInAnimation]>
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <div class="px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-widest">v{{ version() }}</div>
+        <span class="text-text-muted text-sm">•</span>
+        <span class="text-text-muted text-sm font-medium">Last sync: 2m ago</span>
+      </div>
+      <h1 class="text-5xl font-display font-black text-text-primary tracking-tighter glow-text">Command Center</h1>
+      <p class="text-text-secondary mt-2 text-lg font-medium max-w-xl">Intelligent ecosystem monitoring and bug lifecycle orchestration.</p>
+    </div>
+    
+    <div class="flex items-center gap-4">
+      @if (rbac.can('data:export')) {
+        <button (click)="generateReport()" class="btn-primary">Generate Report</button>
+      }
+      @if (rbac.can('settings:edit')) {
+        <button routerLink="/settings" class="p-3 glass rounded-2xl text-text-muted hover:text-text-primary transition-all" title="Settings" tabindex="0">
+          <lucide-icon [name]="Settings" [size]="24"></lucide-icon>
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- Bento Grid Dashboard -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" [@listAnimation]="5">
+    
+    <!-- Big Performance Chart -->
+    <div class="col-span-1 md:col-span-2 lg:row-span-2 bento-item bg-gradient-to-br from-bg-surface to-bg-base flex flex-col animate-reveal">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-xl font-bold text-text-primary tracking-tight">Ecosystem Velocity</h2>
+          <p class="text-xs text-text-muted font-medium">Weekly resolution vs reporting throughput</p>
+        </div>
+      </div>
+      <div class="flex-1 min-h-[300px] relative">
+        <canvas baseChart
+          [data]="lineChartData()"
+          [options]="lineChartOptions"
+          [type]="'line'">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Active Issues Stats -->
+    <div class="col-span-1 bento-item flex flex-col justify-between overflow-hidden animate-reveal" style="animation-delay: 100ms">
+      <div class="flex items-center justify-between">
+        <div class="w-12 h-12 rounded-2xl bg-error/10 text-error flex items-center justify-center shadow-lg shadow-error/10">
+          <lucide-icon [name]="Bug" [size]="24"></lucide-icon>
+        </div>
+        <div class="text-right">
+          <div class="text-xs font-black text-text-muted uppercase tracking-widest">Active</div>
+          <div class="text-3xl font-display font-black text-error leading-none mt-1">{{ bugStore.openBugsCount() }}</div>
+        </div>
+      </div>
+      <div class="mt-8">
+        <div class="flex justify-between text-xs font-bold mb-2">
+          <span class="text-text-secondary">System Load</span>
+          <span class="text-text-primary">{{ systemLoad() }}%</span>
+        </div>
+        <div class="h-1.5 w-full bg-bg-elevated rounded-full overflow-hidden">
+          <div class="h-full bg-error rounded-full" [style.width.%]="systemLoad()"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Members -->
+    <div class="col-span-1 bento-item flex flex-col justify-between animate-reveal" style="animation-delay: 200ms">
+      <div class="flex items-center justify-between">
+        <div class="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center shadow-lg shadow-accent/10">
+          <lucide-icon [name]="Users" [size]="24"></lucide-icon>
+        </div>
+        <div class="text-right">
+          <div class="text-xs font-black text-text-muted uppercase tracking-widest">Team</div>
+          <div class="text-3xl font-display font-black text-text-primary leading-none mt-1">{{ userLookup.members().length }}</div>
+        </div>
+      </div>
+      <div class="flex -space-x-3 mt-6">
+        @for (member of userLookup.members().slice(0, 5); track member.id) {
+          <div class="w-10 h-10 rounded-full border-2 border-bg-surface flex items-center justify-center text-[10px] font-bold text-white hover:-translate-y-1 transition-transform cursor-pointer"
+            [style.background-color]="member.color"
+            [title]="member.name">
+            {{ member.initials }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Priority Distribution -->
+    <div class="col-span-1 md:col-span-2 bento-item flex flex-col md:flex-row gap-8 items-center animate-reveal" style="animation-delay: 300ms">
+      <div class="w-40 h-40 flex-shrink-0 relative">
+        <canvas baseChart
+          [data]="doughnutChartData()"
+          [options]="doughnutChartOptions"
+          [type]="'doughnut'">
+        </canvas>
+        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
+          <span class="text-2xl font-black text-text-primary">{{ bugStore.bugCount() }}</span>
+          <span class="text-[8px] font-bold text-text-muted uppercase tracking-widest">Issues</span>
+        </div>
+      </div>
+      <div class="flex-1 grid grid-cols-2 gap-4 w-full">
+        @for (p of ['critical', 'high', 'medium', 'low']; track p) {
+          <div class="p-3 rounded-2xl bg-bg-elevated/30 border border-border/50 hover:border-accent/30 transition-colors">
+            <div class="text-[10px] font-bold uppercase mb-1" 
+                 [class.text-error]="p === 'critical'"
+                 [class.text-warning]="p === 'high'"
+                 [class.text-info]="p === 'medium'"
+                 [class.text-success]="p === 'low'">{{ p }}</div>
+            <div class="text-lg font-black text-text-primary">
+              {{ priorityCounts()[p === 'critical' ? 'critical' : p === 'high' ? 'high' : p === 'medium' ? 'medium' : 'low'] }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Row: Activity Pulse -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-10 animate-reveal" style="animation-delay: 400ms">
+    <div class="lg:col-span-3 glass-card bg-gradient-to-r from-bg-surface/50 to-transparent">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-bold text-text-primary">Real-time Stream</h2>
+        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase tracking-widest">
+          <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span> Live
+        </div>
+      </div>
+      <div class="space-y-4">
+        @if (recentActivity().length > 0) {
+          @for (entry of recentActivity(); track entry.id) {
+            <div class="flex items-center gap-6 p-4 rounded-2xl hover:bg-bg-elevated/30 transition-all border border-transparent hover:border-border/50 group">
+              <div class="w-2 h-10 bg-accent/20 rounded-full group-hover:bg-accent transition-colors flex-shrink-0"></div>
+              <div class="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold flex-shrink-0">
+                {{ entry.userName.substring(0,2).toUpperCase() }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-text-primary font-medium truncate">
+                  <span class="font-bold">{{ entry.userName }}</span> {{ entry.description }}
+                </div>
+                <div class="text-[10px] text-text-muted font-bold uppercase tracking-wider mt-1">
+                  {{ entry.timestamp | date:'MMM d, h:mm a' }}
+                </div>
+              </div>
+              <lucide-icon [name]="ChevronRight" [size]="16" class="text-text-muted group-hover:text-accent group-hover:translate-x-1 transition-all flex-shrink-0"></lucide-icon>
+            </div>
+          }
+        } @else {
+          @for (bug of bugStore.bugs().slice(0, 3); track bug.id) {
+            <div class="flex items-center gap-6 p-4 rounded-2xl hover:bg-bg-elevated/30 transition-all border border-transparent hover:border-border/50 group cursor-pointer"
+              (click)="navigateToBug(bug.id)" tabindex="0" (keydown.enter)="navigateToBug(bug.id)">
+              <div class="w-2 h-10 bg-accent/20 rounded-full group-hover:bg-accent transition-colors"></div>
+              <div class="flex-1">
+                <div class="text-sm text-text-primary font-medium">Issue <span class="text-accent font-black">#BT-{{ bug.id.toUpperCase() }}</span> — <span class="font-bold">{{ bug.title }}</span></div>
+                <div class="text-[10px] text-text-muted font-bold uppercase tracking-wider mt-1">{{ bug.status }} • {{ bug.createdAt | date:'MMM d' }}</div>
+              </div>
+              <lucide-icon [name]="ChevronRight" [size]="16" class="text-text-muted group-hover:text-accent group-hover:translate-x-1 transition-all"></lucide-icon>
+            </div>
+          }
+        }
+      </div>
+    </div>
+    
+    <div class="glass-card flex flex-col items-center justify-center text-center p-10 bg-accent/5">
+      <div class="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center text-accent mb-6 shadow-2xl shadow-accent/20">
+        <lucide-icon [name]="Rocket" [size]="40"></lucide-icon>
+      </div>
+      <h3 class="text-lg font-black text-text-primary mb-2 tracking-tight">Quick Actions</h3>
+      <p class="text-sm text-text-muted mb-6 leading-relaxed">Jump to the most important parts of your workspace.</p>
+      <div class="w-full space-y-2">
+        <a routerLink="/bugs" class="w-full btn-primary shadow-xl shadow-accent/30 justify-center">View All Issues</a>
+        <a routerLink="/projects" class="w-full btn-secondary justify-center">Manage Projects</a>
+      </div>
+    </div>
+  </div>
+</div>

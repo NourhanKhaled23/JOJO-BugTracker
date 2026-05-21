@@ -1,4 +1,4 @@
-import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
+import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -14,8 +14,8 @@ export interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('token'),
-  isAuthenticated: !!localStorage.getItem('token'),
+  token: null,
+  isAuthenticated: false,
   isLoading: false,
   error: null,
 };
@@ -24,18 +24,34 @@ export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods((store, router = inject(Router)) => ({
-    login(token: string, user: User) {
-      localStorage.setItem('token', token);
+    initialize(): void {
+      const token = sessionStorage.getItem('token');
+      const userRaw = sessionStorage.getItem('bugtrackr_user');
+      if (token) {
+        let user: User | null;
+        try {
+          user = userRaw ? JSON.parse(userRaw) : null;
+        } catch {
+          user = null;
+        }
+        patchState(store, { token, isAuthenticated: true, user });
+      }
+    },
+    login(token: string, user: User): void {
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('bugtrackr_user', JSON.stringify(user));
       patchState(store, { 
         token, 
         user, 
         isAuthenticated: true, 
-        error: null 
+        error: null,
+        isLoading: false
       });
       router.navigate(['/dashboard']);
     },
-    logout() {
-      localStorage.removeItem('token');
+    logout(): void {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('bugtrackr_user');
       patchState(store, { 
         token: null, 
         user: null, 
@@ -43,11 +59,16 @@ export const AuthStore = signalStore(
       });
       router.navigate(['/auth/login']);
     },
-    setLoading(isLoading: boolean) {
+    setLoading(isLoading: boolean): void {
       patchState(store, { isLoading });
     },
-    setError(error: string) {
+    setError(error: string): void {
       patchState(store, { error, isLoading: false });
     }
-  }))
+  })),
+  withHooks({
+    onInit(store) {
+      store.initialize();
+    }
+  })
 );

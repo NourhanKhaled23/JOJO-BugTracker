@@ -1,23 +1,26 @@
-// Base (Dark Theme — Default)
-:root {
-  --bg-base: #0A0A0F;
-  --bg-surface: #13131A;
-  --bg-elevated: #1C1C27;
-  --bg-hover: #252535;
-  --border: #2A2A3E;
-  --border-strong: #3D3D5C;
+.theme-dark {
+  --bg-base: #030712;      // Slate 950
+  --bg-surface: #0f172a;   // Slate 900
+  --bg-elevated: #1e293b;  // Slate 800
+  --bg-hover: #334155;     // Slate 700
+  --border: #1e293b;       // Slate 800
+  --border-strong: #334155; // Slate 700
 
-  --text-primary: #F0F0FF;
-  --text-secondary: #9090B0;
-  --text-muted: #60607A;
+  --text-primary: #f8fafc;   // Slate 50
+  --text-secondary: #94a3b8; // Slate 400
+  --text-muted: #64748b;     // Slate 500
 
-  // Accent: Electric Violet
-  --accent: #7C3AED;
-  --accent-bright: #9D5FF0;
-  --accent-subtle: rgba(124, 58, 237, 0.15);
+  // Accent: Indigo/Violet Hybrid
+  --accent: #6366f1;
+  --accent-bright: #818cf8;
+  --accent-subtle: rgba(99, 102, 241, 0.15);
 
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #0ea5e9;
+  
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
+

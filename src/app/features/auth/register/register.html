@@ -1,162 +1,240 @@
-<div class="min-h-screen flex items-center justify-center p-4 bg-bg-base">
-  <div class="w-full max-w-md card p-8 page-enter">
-    
-    <div class="text-center mb-6">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-accent-subtle text-accent mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+<div class="min-h-screen flex bg-bg-base">
+
+  <!-- Left Panel: Branding -->
+  <div class="hidden lg:flex lg:w-1/2 relative flex-col items-center justify-center overflow-hidden p-16"
+       style="background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%);">
+    <!-- Mesh grid background -->
+    <div class="absolute inset-0"
+         style="background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.4;"></div>
+
+    <!-- Glow orbs -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 rounded-full"
+         style="background: radial-gradient(circle, var(--accent-subtle) 0%, transparent 70%); transform: translate(-50%,-50%);"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full"
+         style="background: radial-gradient(circle, var(--accent-subtle) 0%, transparent 70%); transform: translate(50%,50%);"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 text-center max-w-md">
+      <div class="inline-flex items-center gap-4 mb-12">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl"
+             style="background: linear-gradient(135deg, var(--accent), var(--accent-bright)); box-shadow: 0 20px 40px -10px var(--accent);">
+          <lucide-icon [name]="BugIcon" [size]="32" class="text-white"></lucide-icon>
+        </div>
+        <div class="text-left">
+          <div class="text-3xl font-black tracking-tighter" style="font-family: 'Syne', sans-serif; color: var(--text-primary);">JOJO</div>
+          <div class="text-xs font-black uppercase tracking-widest" style="color: var(--accent);">Systems</div>
+        </div>
       </div>
-      <h1 class="text-2xl font-bold text-text-primary">Create an account</h1>
-      <p class="text-text-muted mt-2">Join BugTrackr to manage your projects</p>
+
+      <h2 class="text-5xl font-black tracking-tighter mb-6" style="font-family: 'Syne', sans-serif; color: var(--text-primary); line-height: 1.05;">
+        Your workspace,<br><span style="color: var(--accent);">organized.</span>
+      </h2>
+      <p class="text-lg" style="color: var(--text-secondary); line-height: 1.6;">
+        Create your account and join a team to start tracking bugs and shipping faster.
+      </p>
+
+      <div class="flex items-center justify-center gap-8 mt-12">
+        <div class="text-center">
+          <div class="text-2xl font-black" style="font-family: 'Syne', sans-serif; color: var(--text-primary);">2min</div>
+          <div class="text-xs uppercase tracking-wider mt-1" style="color: var(--text-muted);">Setup</div>
+        </div>
+        <div class="w-px h-8" style="background: var(--border);"></div>
+        <div class="text-center">
+          <div class="text-2xl font-black" style="font-family: 'Syne', sans-serif; color: var(--text-primary);">Free</div>
+          <div class="text-xs uppercase tracking-wider mt-1" style="color: var(--text-muted);">Forever</div>
+        </div>
+        <div class="w-px h-8" style="background: var(--border);"></div>
+        <div class="text-center">
+          <div class="text-2xl font-black" style="font-family: 'Syne', sans-serif; color: var(--text-primary);">∞</div>
+          <div class="text-xs uppercase tracking-wider mt-1" style="color: var(--text-muted);">Projects</div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Progress steps -->
-    <div class="flex items-center justify-between mb-8 relative">
-      <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-bg-hover rounded">
-        <div class="h-full bg-accent rounded transition-all duration-300" [style.width]="currentStep === 1 ? '50%' : '100%'"></div>
-      </div>
-      
-      <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300" 
-           [class.bg-accent]="currentStep >= 1" 
-           [class.text-white]="currentStep >= 1">
-        @if (currentStep > 1) {
-          <lucide-icon name="check" [size]="16"></lucide-icon>
-        } @else {
-          <span class="text-sm font-medium">1</span>
-        }
-      </div>
-      
-      <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300"
-           [class.bg-accent]="currentStep === 2" 
-           [class.text-white]="currentStep === 2"
-           [class.bg-bg-hover]="currentStep < 2"
-           [class.text-text-muted]="currentStep < 2">
-        <span class="text-sm font-medium">2</span>
-      </div>
-    </div>
+  <!-- Right Panel: Form -->
+  <div class="flex-1 flex items-center justify-center p-8">
+    <div class="w-full max-w-md">
 
-    @if (error) {
-      <div class="p-3 mb-6 rounded-lg bg-error/10 border border-error/20 text-error text-sm text-center">
-        {{ error }}
+      <!-- Mobile Logo -->
+      <div class="flex lg:hidden items-center gap-3 mb-10">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+             style="background: linear-gradient(135deg, var(--accent), var(--accent-bright));">
+          <lucide-icon [name]="BugIcon" [size]="22" class="text-white"></lucide-icon>
+        </div>
+        <span class="text-2xl font-black tracking-tighter" style="font-family: 'Syne', sans-serif; color: var(--text-primary);">JOJO</span>
       </div>
-    }
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
-      
-      <!-- STEP 1 -->
-      <div [class.hidden]="currentStep !== 1" class="space-y-5 fade-in">
-        <div>
-          <label for="fullName" class="block text-sm font-medium text-text-secondary mb-1">Full Name</label>
-          <input 
-            id="fullName" 
-            type="text" 
-            formControlName="fullName"
-            class="w-full px-4 py-2 bg-bg-elevated border border-border rounded-lg focus:outline-none focus:border-accent text-text-primary transition-colors"
-            placeholder="Jane Doe"
+      <div class="mb-8">
+        <h1 class="text-4xl font-black tracking-tighter" style="font-family: 'Syne', sans-serif; color: var(--text-primary);">Create account</h1>
+        <p class="mt-2 text-base" style="color: var(--text-muted);">Two steps to get you started</p>
+      </div>
+
+      <!-- Progress Steps -->
+      <div class="flex items-center gap-4 mb-10">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black transition-all"
+               [style.background]="currentStep >= 1 ? 'var(--accent)' : 'var(--bg-elevated)'"
+               [style.color]="currentStep >= 1 ? 'white' : 'var(--text-muted)'">
+            @if (currentStep > 1) {
+              <lucide-icon [name]="Check" [size]="14"></lucide-icon>
+            } @else {
+              1
+            }
+          </div>
+          <span class="text-xs font-bold uppercase tracking-wider"
+                [style.color]="currentStep >= 1 ? 'var(--text-primary)' : 'var(--text-muted)'">Identity</span>
+        </div>
+        <div class="flex-1 h-px" [style.background]="currentStep >= 2 ? 'var(--accent)' : 'var(--border)'"></div>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black transition-all"
+               [style.background]="currentStep >= 2 ? 'var(--accent)' : 'var(--bg-elevated)'"
+               [style.color]="currentStep >= 2 ? 'white' : 'var(--text-muted)'">
+            2
+          </div>
+          <span class="text-xs font-bold uppercase tracking-wider"
+                [style.color]="currentStep >= 2 ? 'var(--text-primary)' : 'var(--text-muted)'">Security</span>
+        </div>
+      </div>
+
+      @if (error) {
+        <div class="p-4 mb-6 rounded-2xl flex items-center gap-3 text-sm"
+             style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--error);">
+          {{ error }}
+        </div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+
+        <!-- STEP 1 -->
+        <div [class.hidden]="currentStep !== 1" class="space-y-5">
+          <div>
+            <label for="fullName" class="block text-xs font-black uppercase tracking-widest mb-2" style="color: var(--text-muted);">Full Name</label>
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              class="w-full px-5 py-4 rounded-2xl text-sm outline-none transition-all"
+              style="background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-primary);"
+              placeholder="Jane Doe"
+            >
+            @if (registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')) {
+              <p class="mt-2 text-xs" style="color: var(--error);">Name is required</p>
+            }
+          </div>
+
+          <div>
+            <label for="email" class="block text-xs font-black uppercase tracking-widest mb-2" style="color: var(--text-muted);">Work Email</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="w-full px-5 py-4 rounded-2xl text-sm outline-none transition-all"
+              style="background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-primary);"
+              placeholder="jane@company.com"
+            >
+            @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')) {
+              <p class="mt-2 text-xs" style="color: var(--error);">Email is required</p>
+            }
+            @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')) {
+              <p class="mt-2 text-xs" style="color: var(--error);">Please enter a valid email</p>
+            }
+          </div>
+
+          <button
+            type="button"
+            (click)="nextStep()"
+            class="w-full flex justify-center items-center gap-3 py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-widest text-white transition-all"
+            style="background: linear-gradient(135deg, var(--accent), var(--accent-bright)); box-shadow: 0 10px 30px -10px var(--accent);"
           >
-          @if (registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')) {
-            <p class="mt-1 text-xs text-error">Name is required</p>
-          }
+            Continue
+            <lucide-icon [name]="ChevronRight" [size]="18"></lucide-icon>
+          </button>
         </div>
 
-        <div>
-          <label for="email" class="block text-sm font-medium text-text-secondary mb-1">Email</label>
-          <input 
-            id="email" 
-            type="email" 
-            formControlName="email"
-            class="w-full px-4 py-2 bg-bg-elevated border border-border rounded-lg focus:outline-none focus:border-accent text-text-primary transition-colors"
-            placeholder="jane@example.com"
-          >
-          @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')) {
-            <p class="mt-1 text-xs text-error">Email is required</p>
-          }
-          @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')) {
-            <p class="mt-1 text-xs text-error">Please enter a valid email</p>
-          }
-        </div>
+        <!-- STEP 2 -->
+        <div [class.hidden]="currentStep !== 2" class="space-y-5">
+          <div>
+            <label for="password" class="block text-xs font-black uppercase tracking-widest mb-2" style="color: var(--text-muted);">Password</label>
+            <div class="relative">
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                (input)="checkPasswordStrength()"
+                class="w-full px-5 py-4 pr-14 rounded-2xl text-sm outline-none transition-all"
+                style="background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-primary);"
+                placeholder="••••••••"
+              >
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute inset-y-0 right-0 px-5 flex items-center transition-colors"
+                style="color: var(--text-muted);"
+              >
+                <lucide-icon [name]="showPassword ? EyeOff : Eye" [size]="18"></lucide-icon>
+              </button>
+            </div>
 
-        <button 
-          type="button" 
-          (click)="nextStep()"
-          class="w-full flex justify-center items-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-accent hover:bg-accent-bright transition-colors"
-        >
-          Continue
-          <lucide-icon name="chevron-right" [size]="18" class="ml-1"></lucide-icon>
-        </button>
-      </div>
+            <!-- Password Strength -->
+            <div class="mt-3 flex gap-1.5">
+              @for (bar of [1,2,3,4]; track bar) {
+                <div class="h-1 flex-1 rounded-full transition-all duration-300"
+                     [style.background]="passwordStrength >= bar
+                       ? (bar === 1 ? 'var(--error)' : bar === 2 ? 'var(--warning)' : bar === 3 ? 'var(--accent)' : 'var(--success)')
+                       : 'var(--bg-elevated)'"></div>
+              }
+            </div>
+            <p class="mt-1 text-xs" style="color: var(--text-muted);">Min. 8 characters</p>
+          </div>
 
-      <!-- STEP 2 -->
-      <div [class.hidden]="currentStep !== 2" class="space-y-5 fade-in">
-        <div>
-          <label for="password" class="block text-sm font-medium text-text-secondary mb-1">Password</label>
-          <div class="relative">
-            <input 
-              id="password" 
-              [type]="showPassword ? 'text' : 'password'" 
-              formControlName="password"
-              (input)="checkPasswordStrength()"
-              class="w-full px-4 py-2 pr-10 bg-bg-elevated border border-border rounded-lg focus:outline-none focus:border-accent text-text-primary transition-colors"
+          <div>
+            <label for="confirmPassword" class="block text-xs font-black uppercase tracking-widest mb-2" style="color: var(--text-muted);">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              class="w-full px-5 py-4 rounded-2xl text-sm outline-none transition-all"
+              style="background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-primary);"
               placeholder="••••••••"
             >
-            <button 
-              type="button" 
-              (click)="togglePassword()"
-              class="absolute inset-y-0 right-0 px-3 flex items-center text-text-muted hover:text-text-primary transition-colors"
+            @if (registerForm.hasError('passwordsMismatch') && registerForm.get('confirmPassword')?.touched) {
+              <p class="mt-2 text-xs" style="color: var(--error);">Passwords do not match</p>
+            }
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button
+              type="button"
+              (click)="prevStep()"
+              class="flex items-center justify-center py-4 px-5 rounded-2xl font-bold text-sm transition-all"
+              style="border: 1px solid var(--border); color: var(--text-secondary); background: var(--bg-elevated);"
             >
-              <lucide-icon [name]="showPassword ? 'eye-off' : 'eye'" [size]="18"></lucide-icon>
+              <lucide-icon [name]="ChevronLeft" [size]="18"></lucide-icon>
+            </button>
+
+            <button
+              type="submit"
+              [disabled]="isLoading"
+              class="flex-1 flex justify-center items-center gap-3 py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-widest text-white transition-all"
+              style="background: linear-gradient(135deg, var(--accent), var(--accent-bright)); box-shadow: 0 10px 30px -10px var(--accent);"
+              [class.opacity-70]="isLoading"
+            >
+              @if (isLoading) {
+                <lucide-icon [name]="Loader2" [size]="18" class="animate-spin"></lucide-icon>
+                Creating...
+              } @else {
+                Launch Account
+              }
             </button>
           </div>
-          
-          <!-- Password Strength Indicator -->
-          <div class="mt-2 flex gap-1 h-1.5 w-full rounded overflow-hidden bg-bg-hover">
-            <div class="h-full transition-all duration-300" [class.bg-error]="passwordStrength >= 1" [style.width]="passwordStrength >= 1 ? '25%' : '0'"></div>
-            <div class="h-full transition-all duration-300" [class.bg-warning]="passwordStrength >= 2" [style.width]="passwordStrength >= 2 ? '25%' : '0'"></div>
-            <div class="h-full transition-all duration-300" [class.bg-accent]="passwordStrength >= 3" [style.width]="passwordStrength >= 3 ? '25%' : '0'"></div>
-            <div class="h-full transition-all duration-300" [class.bg-success]="passwordStrength >= 4" [style.width]="passwordStrength >= 4 ? '25%' : '0'"></div>
-          </div>
-          <p class="mt-1 text-xs text-text-muted">Must be at least 8 characters</p>
         </div>
+      </form>
 
-        <div>
-          <label for="confirmPassword" class="block text-sm font-medium text-text-secondary mb-1">Confirm Password</label>
-          <input 
-            id="confirmPassword" 
-            type="password" 
-            formControlName="confirmPassword"
-            class="w-full px-4 py-2 bg-bg-elevated border border-border rounded-lg focus:outline-none focus:border-accent text-text-primary transition-colors"
-            placeholder="••••••••"
-          >
-        </div>
-
-        <div class="flex gap-3">
-          <button 
-            type="button" 
-            (click)="prevStep()"
-            class="flex items-center justify-center py-2.5 px-4 rounded-lg border border-border text-sm font-medium text-text-primary hover:bg-bg-hover transition-colors"
-          >
-            <lucide-icon name="chevron-left" [size]="18" class="mr-1"></lucide-icon>
-            Back
-          </button>
-          
-          <button 
-            type="submit" 
-            [disabled]="isLoading"
-            class="flex-1 flex justify-center items-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-accent hover:bg-accent-bright focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            @if (isLoading) {
-              <lucide-icon name="loader-2" [size]="18" class="animate-spin mr-2"></lucide-icon>
-              Creating...
-            } @else {
-              Create Account
-            }
-          </button>
-        </div>
-      </div>
-    </form>
-
-    <div class="mt-6 text-center text-sm">
-      <span class="text-text-muted">Already have an account? </span>
-      <a routerLink="/auth/login" class="text-accent hover:text-accent-bright font-medium transition-colors">Sign in</a>
+      <p class="mt-8 text-center text-sm" style="color: var(--text-muted);">
+        Already have access?
+        <a routerLink="/auth/login" class="font-black" style="color: var(--accent);"> Sign in →</a>
+      </p>
     </div>
   </div>
 </div>

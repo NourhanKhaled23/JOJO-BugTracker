@@ -1,35 +1,51 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, retry, throwError } from 'rxjs';
+import { catchError, retry, throwError, timer } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToastService } from '../services/toast.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const toast = inject(ToastService);
 
   return next(req).pipe(
-    retry({ count: 2, delay: 1000, resetOnSuccess: true }),
+    retry({
+      count: req.method === 'GET' ? 2 : 0,
+      delay: (error, retryCount) => {
+        return timer(Math.pow(2, retryCount) * 1000);
+      }
+    }),
     catchError((error: HttpErrorResponse) => {
+      let message = 'An unexpected error occurred';
+
       switch (error.status) {
         case 0:
-          console.error('No internet connection');
+          message = 'No internet connection available';
           break;
         case 401:
+          message = 'Session expired. Please login again.';
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('bugtrackr_user');
           router.navigate(['/auth/login']);
           break;
         case 403:
-          console.error('You do not have permission');
+          message = 'You do not have permission to perform this action';
           break;
         case 404:
-          router.navigate(['/404']);
+          message = 'Requested resource not found';
           break;
         case 422:
           return throwError(() => error);
         case 429:
-          console.error('Too many requests. Please wait.');
+          message = 'Too many requests. Please try again later.';
           break;
-        default:
-          console.error('Something went wrong. Please try again.');
+        case 500:
+          message = 'Internal server error. Our team has been notified.';
+          break;
       }
+
+      console.error(`[HTTP Error ${error.status}]`, message, error);
+      toast.show(message, 'error');
       return throwError(() => error);
     })
   );
